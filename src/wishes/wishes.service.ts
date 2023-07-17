@@ -7,12 +7,16 @@ export class WishesService {
   create(createWishDto: CreateWishDto) {
     return 'This action adds a new wish';
   }
-
-  findAll() {
-    return `This action returns all wishes`;
+  createCopy(createWishDto: CreateWishDto) {
+    return 'This action adds a new wish (COPY)';
   }
-
-  findOne(id: number) {
+  findLast() {
+    return `This action returns LAST wishes`;
+  }
+  findTop() {
+    return `This action returns TOP wishes`;
+  }
+  findById(id: number) {
     return `This action returns a #${id} wish`;
   }
 

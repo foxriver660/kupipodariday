@@ -17,40 +17,40 @@ export class WishesController {
 
   @Post()
   create(@Body() createWishDto: CreateWishDto) {
-    console.log('post wishes');
+    console.log('post wishes', createWishDto);
     return this.wishesService.create(createWishDto);
   }
   @Post(':id/copy')
   createCopy(@Param('id') id: string, @Body() createWishDto: CreateWishDto) {
-    console.log('post wishes/:id/copy');
-    return this.wishesService.create(createWishDto);
+    console.log('post wishes/:id/copy', createWishDto, `id: ${id}`);
+    return this.wishesService.createCopy(createWishDto);
   }
 
   @Get('last')
   findLast() {
     console.log('get wishes/last');
-    return this.wishesService.findAll();
+    return this.wishesService.findLast();
   }
   @Get('top')
   findTop() {
     console.log('get wishes/top');
-    return this.wishesService.findAll();
+    return this.wishesService.findTop();
   }
   @Get(':id')
   findById(@Param('id') id: string) {
-    console.log('get wishes/:id');
-    return this.wishesService.findOne(+id);
+    console.log('get wishes/:id', `id: ${id}`);
+    return this.wishesService.findById(+id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateWishDto: UpdateWishDto) {
-    console.log('patch wishes/:id', updateWishDto);
+    console.log('patch wishes/:id', updateWishDto, `id: ${id}`);
     return this.wishesService.update(+id, updateWishDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    console.log('delete wishes/:id');
+    console.log('delete wishes/:id', `id: ${id}`);
     return this.wishesService.remove(+id);
   }
 }
