@@ -1,6 +1,7 @@
 import {
   IsDate,
   IsEmail,
+  IsInt,
   IsNotEmpty,
   IsNumber,
   IsString,
@@ -34,12 +35,15 @@ export class CreateUserDto {
   @IsNotEmpty()
   password: string;
 
-  @IsNumber()
+  @IsInt()
+  @IsNotEmpty()
   id: number;
 
   @IsDate()
+  @IsNotEmpty()
   createdAt: string;
 
   @IsDate()
+  @IsNotEmpty()
   updatedAt: string;
 }
