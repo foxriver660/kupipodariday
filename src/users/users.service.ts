@@ -7,20 +7,19 @@ export class UsersService {
   create(createUserDto: CreateUserDto) {
     return 'This action adds a new user';
   }
-
-  findAll() {
-    return `This action returns all users`;
+  findMe() {
+    return `This action returns Me`;
   }
-
-  findOne(id: string) {
-    return `This action returns a #${id} user`;
+  findMyWishes() {
+    return `This action returns My Wishes`;
   }
-
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  findByUserName(username: string) {
+    return `This action returns a #${username} user`;
   }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  findByUserWishes(username: string) {
+    return `This action returns a #${username} user`;
+  }
+  update(updateUserDto: UpdateUserDto) {
+    return `This action updates a #${updateUserDto.name} user`;
   }
 }
