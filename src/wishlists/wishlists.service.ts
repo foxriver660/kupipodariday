@@ -12,7 +12,7 @@ export class WishlistsService {
     return `This action returns all wishlists`;
   }
 
-  findOne(id: number) {
+  findById(id: number) {
     return `This action returns a #${id} wishlist`;
   }
 
