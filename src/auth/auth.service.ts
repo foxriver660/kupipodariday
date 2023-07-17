@@ -5,10 +5,10 @@ import { LoginAuthDto } from './dto/login-auth.dto';
 @Injectable()
 export class AuthService {
   register(createAuthDto: CreateAuthDto) {
-    return `TEST REGISTER ${createAuthDto}`;
+    return `TEST REGISTER`;
   }
 
   login(loginAuthDto: LoginAuthDto) {
-    return `TEST REGISTER ${loginAuthDto}`;
+    return `TEST REGISTER`;
   }
 }
