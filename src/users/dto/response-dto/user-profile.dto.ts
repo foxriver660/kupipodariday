@@ -1,33 +1,35 @@
 import {
-  IsEmail,
+  IsNumber,
   IsString,
-  IsUrl,
-  MaxLength,
   MinLength,
+  MaxLength,
+  IsEmail,
+  IsDateString,
 } from 'class-validator';
 
-export class UpdateUserDto {
+export class UserProfileResponseDto {
+  @IsNumber()
+  id: number;
+
   @IsString()
   @MinLength(1)
   @MaxLength(64)
   username: string;
 
   @IsString()
+  @MinLength(1)
   @MaxLength(200)
   about: string;
 
-  @IsUrl(
-    {
-      protocols: ['http', 'https'],
-    },
-    { message: 'Avatar should be a valid URL' },
-  )
+  @IsString()
   avatar: string;
 
   @IsEmail()
   email: string;
 
-  @IsString()
-  @MinLength(2)
-  password: string;
+  @IsDateString()
+  createdAt: string;
+
+  @IsDateString()
+  updatedAt: string;
 }
