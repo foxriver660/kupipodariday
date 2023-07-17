@@ -8,16 +8,19 @@ export class OffersController {
 
   @Post()
   create(@Body() createOfferDto: CreateOfferDto) {
+    console.log('post offers', createOfferDto);
     return this.offersService.create(createOfferDto);
   }
 
   @Get()
   findAll() {
+    console.log('get offers');
     return this.offersService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.offersService.findOne(+id);
+  findById(@Param('id') id: string) {
+    console.log('get offers/:id', `id: ${id}`);
+    return this.offersService.findById(+id);
   }
 }

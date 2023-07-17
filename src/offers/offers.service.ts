@@ -11,7 +11,7 @@ export class OffersService {
     return `This action returns all offers`;
   }
 
-  findOne(id: number) {
+  findById(id: number) {
     return `This action returns a #${id} offer`;
   }
 }
