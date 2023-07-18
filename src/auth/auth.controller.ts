@@ -4,6 +4,8 @@ import {
   Body,
   UsePipes,
   ValidationPipe,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -14,8 +16,9 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('signin')
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe())
   login(@Body() signinUserDto: SigninUserDto) {
-    console.log(`SIGNIN: ${signinUserDto.email} ${signinUserDto.password}`);
     return this.authService.login(signinUserDto);
   }
   @Post('signup')

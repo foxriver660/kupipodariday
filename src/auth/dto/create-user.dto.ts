@@ -10,31 +10,28 @@ import {
 
 export class CreateUserDto {
   @IsString()
-  @MaxLength(64, { message: 'Username is too long' })
-  @IsNotEmpty({ message: 'Username should not be empty' })
+  @MaxLength(64)
+  @IsNotEmpty()
   username: string;
 
-  @IsEmail({}, { message: 'Email should be a valid email address' })
-  @IsNotEmpty({ message: 'Email should not be empty' })
+  @IsEmail()
+  @IsNotEmpty()
   email: string;
 
   @IsString()
-  @MinLength(2, { message: 'Password is too short' })
-  @IsNotEmpty({ message: 'Password should not be empty' })
+  @MinLength(2)
+  @IsNotEmpty()
   password: string;
 
   // ОПЦИОНАЛЬНО
   @IsString()
-  @MaxLength(200, { message: 'About is too long' })
+  @MaxLength(200)
   @IsOptional()
   about?: string;
 
-  @IsUrl(
-    {
-      protocols: ['http', 'https'],
-    },
-    { message: 'Avatar should be a valid URL' },
-  )
+  @IsUrl({
+    protocols: ['http', 'https'],
+  })
   @IsOptional()
   avatar?: string;
 }

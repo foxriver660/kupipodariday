@@ -3,22 +3,24 @@ import {
   IsEmail,
   IsInt,
   IsNotEmpty,
-  IsNumber,
   IsString,
   IsUrl,
   MaxLength,
-  MinLength,
 } from 'class-validator';
 
-export class CreateUserDto {
+export class SignupResponseDto {
+  @IsInt()
+  @IsNotEmpty()
+  id: number;
+
   @IsString()
-  @MinLength(1)
   @MaxLength(64)
   @IsNotEmpty()
   username: string;
 
   @IsString()
   @MaxLength(200)
+  @IsNotEmpty()
   about: string;
 
   @IsUrl({
@@ -30,20 +32,11 @@ export class CreateUserDto {
   @IsNotEmpty()
   email: string;
 
-  @IsString()
-  @MinLength(2)
+  @IsDate()
   @IsNotEmpty()
-  password: string;
-
-  @IsInt()
-  @IsNotEmpty()
-  id: number;
+  createdAt: Date;
 
   @IsDate()
   @IsNotEmpty()
-  createdAt: string;
-
-  @IsDate()
-  @IsNotEmpty()
-  updatedAt: string;
+  updatedAt: Date;
 }
