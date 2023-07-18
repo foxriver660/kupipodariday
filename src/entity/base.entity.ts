@@ -10,11 +10,9 @@ export abstract class BaseEntity {
   @IsInt()
   id: number;
 
-  @CreateDateColumn({ type: 'timestamp' })
-  @IsDate()
+  @CreateDateColumn()
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamp' })
-  @IsDate()
+  @UpdateDateColumn()
   updatedAt: Date;
 }
