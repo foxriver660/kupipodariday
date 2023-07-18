@@ -6,21 +6,26 @@ import {
   ValidationPipe,
   HttpCode,
   HttpStatus,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { SigninUserDto } from './dto/signin-user.dto';
+import { LocalAuthGuard } from './guards/local-auth.guard';
 
 @Controller()
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('signin')
+  @UseGuards(LocalAuthGuard)
   @HttpCode(HttpStatus.OK)
-  @UsePipes(new ValidationPipe())
-  login(@Body() signinUserDto: SigninUserDto) {
-    return this.authService.login(signinUserDto);
+  @Post('signin')
+  async login(@Request() req) {
+    return req.user;
   }
+
   @Post('signup')
   @UsePipes(new ValidationPipe())
   register(@Body() createUserDto: CreateUserDto) {

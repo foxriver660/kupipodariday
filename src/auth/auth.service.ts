@@ -43,13 +43,17 @@ export class AuthService {
     }
   }
 
-  async login(signinUserDto: SigninUserDto) {
+  async validateUser({ username, password }: SigninUserDto) {
     const user = await this.usersRepository.findOneBy({
-      username: signinUserDto.username,
+      username,
     });
     if (!user) {
       throw new UnauthorizedException('User not found');
     }
-    return user;
+    if (user && user.password === password) {
+      const { password, ...result } = user;
+      return result;
+    }
+    return null;
   }
 }
