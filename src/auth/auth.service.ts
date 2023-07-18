@@ -11,12 +11,13 @@ import { QueryFailedError, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { SignupResponseDto } from './dto/response-dto/signup-response.dto';
 import { SigninUserDto } from './dto/signin-user.dto';
-
+import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    private jwtService: JwtService,
   ) {}
   async register(createUserDto: CreateUserDto) {
     try {
@@ -64,5 +65,12 @@ export class AuthService {
       return result;
     }
     return null;
+  }
+  // JWT
+  async login(user: any) {
+    const payload = { username: user.username, sub: user.id };
+    return {
+      access_token: this.jwtService.sign(payload),
+    };
   }
 }
