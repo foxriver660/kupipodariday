@@ -5,6 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { compare, genSalt, hash } from 'bcrypt';
 import { User } from 'src/users/entities/user.entity';
 import { QueryFailedError, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -19,7 +20,12 @@ export class AuthService {
   ) {}
   async register(createUserDto: CreateUserDto) {
     try {
-      const savedUser = await this.usersRepository.save(createUserDto);
+      const salt = await genSalt(10);
+      const newUser = {
+        ...createUserDto,
+        password: await hash(createUserDto.password, salt),
+      };
+      const savedUser = await this.usersRepository.save(newUser);
       const { id, username, email, about, avatar, createdAt, updatedAt } =
         savedUser;
       const signupResponseDto: SignupResponseDto = {
@@ -48,9 +54,12 @@ export class AuthService {
       username,
     });
     if (!user) {
-      throw new UnauthorizedException('User not found');
+      throw new UnauthorizedException(
+        '[U]Authorization error, please check the correctness of the data entered',
+      );
     }
-    if (user && user.password === password) {
+    const isValidPassword = await compare(password, user.password);
+    if (isValidPassword) {
       const { password, ...result } = user;
       return result;
     }
