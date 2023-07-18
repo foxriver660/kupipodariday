@@ -23,7 +23,9 @@ import { User } from './users/entities/user.entity';
       entities: [User],
       synchronize: true,
     }),
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     UsersModule,
     WishesModule,
     WishlistsModule,
