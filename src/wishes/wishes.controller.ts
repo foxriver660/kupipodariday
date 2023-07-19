@@ -26,9 +26,8 @@ export class WishesController {
     return this.wishesService.create(createWishDto);
   }
   @Post(':id/copy')
-  createCopy(@Param('id') id: string, @Body() createWishDto: CreateWishDto) {
-    console.log('post wishes/:id/copy', createWishDto, `id: ${id}`);
-    return this.wishesService.createCopy(createWishDto);
+  createCopy(@Param('id') id: string) {
+    return this.wishesService.createCopy(+id);
   }
 
   @Get('last')
@@ -41,9 +40,10 @@ export class WishesController {
     console.log('get wishes/top');
     return this.wishesService.findTop();
   }
+
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   findById(@Param('id') id: string) {
-    console.log('get wishes/:id', `id: ${id}`);
     return this.wishesService.findById(+id);
   }
 
