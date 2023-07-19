@@ -1,5 +1,6 @@
 import {
   IsEmail,
+  IsOptional,
   IsString,
   IsUrl,
   MaxLength,
@@ -8,13 +9,14 @@ import {
 
 export class UpdateUserDto {
   @IsString()
-  @MinLength(1)
   @MaxLength(64)
-  username: string;
+  @IsOptional()
+  username?: string;
 
   @IsString()
   @MaxLength(200)
-  about: string;
+  @IsOptional()
+  about?: string;
 
   @IsUrl(
     {
@@ -22,12 +24,15 @@ export class UpdateUserDto {
     },
     { message: 'Avatar should be a valid URL' },
   )
-  avatar: string;
+  @IsOptional()
+  avatar?: string;
 
   @IsEmail()
-  email: string;
+  @IsOptional()
+  email?: string;
 
   @IsString()
   @MinLength(2)
-  password: string;
+  @IsOptional()
+  password?: string;
 }

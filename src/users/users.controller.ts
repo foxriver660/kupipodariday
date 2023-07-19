@@ -1,6 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  UseGuards,
+  Request,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('users')
 export class UsersController {
@@ -11,10 +23,10 @@ export class UsersController {
     console.log('post users/find', createUserDto);
     return this.usersService.create(createUserDto);
   } */
+  @UseGuards(JwtAuthGuard)
   @Get('me')
-  findMe() {
-    console.log('get users/me');
-    return this.usersService.findMe();
+  findMe(@Request() { user: { id } }) {
+    return this.usersService.findById(id);
   }
   @Get('me/wishes')
   findMyWishes() {
@@ -32,9 +44,10 @@ export class UsersController {
     return this.usersService.findByUserWishes(username);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @UsePipes(new ValidationPipe())
   @Patch('me')
-  update(@Body() updateUserDto: UpdateUserDto) {
-    console.log('patch users/me', updateUserDto);
-    return this.usersService.update(updateUserDto);
+  update(@Request() { user: { id } }, @Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.update(id, updateUserDto);
   }
 }

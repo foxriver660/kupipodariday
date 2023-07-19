@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -13,8 +13,10 @@ export class UsersService {
   /* create(createUserDto: CreateUserDto) {
     return 'This action adds a new user';
   } */
-  findMe() {
-    return `This action returns Me`;
+  async findById(id: number) {
+    const user = await this.usersRepository.findOne({ where: { id } });
+    const { password, ...result } = user;
+    return result;
   }
   findMyWishes() {
     return `This action returns My Wishes`;
@@ -25,7 +27,11 @@ export class UsersService {
   findByUserWishes(username: string) {
     return `This action returns a #${username} user`;
   }
-  update(updateUserDto: UpdateUserDto) {
-    return `This action updates a #${updateUserDto.username} user`;
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    try {
+      await this.usersRepository.update(id, updateUserDto);
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 }
