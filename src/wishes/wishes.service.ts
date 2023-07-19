@@ -65,12 +65,30 @@ export class WishesService {
       await queryRunner.release();
     }
   }
-  findLast() {
-    return `This action returns LAST wishes`;
+  // TODO непонятно по заданию либо ласт или отсортировано с ласта
+  async findSortedWishes(sortOrder: 'ASC' | 'DESC'): Promise<Wish[]> {
+    const order = { createdAt: sortOrder };
+    try {
+      const wishes = await this.wishRepository.find({ order });
+      return wishes;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
-  findTop() {
-    return `This action returns TOP wishes`;
+  // TODO непонятно по заданию либо ласт или отсортировано с ласта
+  async findWish(sortOrder: 'ASC' | 'DESC'): Promise<Wish[]> {
+    const order = { createdAt: sortOrder };
+    try {
+      const wishes = await this.wishRepository.findOne({
+        where: {},
+        order,
+      });
+      return [wishes];
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
+
   async findById(id: number) {
     try {
       const findWish = await this.wishRepository.findOne({ where: { id } });
@@ -83,11 +101,25 @@ export class WishesService {
     }
   }
 
-  update(id: number, updateWishDto: UpdateWishDto) {
-    return `This action updates a #${id} wish`;
+  async update(id: number, updateWishDto: UpdateWishDto) {
+    try {
+      const updateResult = await this.wishRepository.update(id, updateWishDto);
+      if (updateResult.affected === 0) {
+        throw new InternalServerErrorException('Failed to update the wish');
+      }
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} wish`;
+  async remove(id: number) {
+    try {
+      const removedWish = await this.wishRepository.delete(id);
+      if (removedWish.affected !== 1) {
+        throw new NotFoundException('Requested wish was not found');
+      }
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 }

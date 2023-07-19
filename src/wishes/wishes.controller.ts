@@ -30,15 +30,18 @@ export class WishesController {
     return this.wishesService.createCopy(+id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('last')
   findLast() {
     console.log('get wishes/last');
-    return this.wishesService.findLast();
+    return this.wishesService.findWish('DESC');
   }
+
+  @UseGuards(JwtAuthGuard)
   @Get('top')
   findTop() {
     console.log('get wishes/top');
-    return this.wishesService.findTop();
+    return this.wishesService.findWish('ASC');
   }
 
   @UseGuards(JwtAuthGuard)
@@ -47,12 +50,14 @@ export class WishesController {
     return this.wishesService.findById(+id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateWishDto: UpdateWishDto) {
     console.log('patch wishes/:id', updateWishDto, `id: ${id}`);
     return this.wishesService.update(+id, updateWishDto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     console.log('delete wishes/:id', `id: ${id}`);
