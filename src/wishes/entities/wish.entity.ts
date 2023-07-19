@@ -1,4 +1,6 @@
 import { BaseEntity } from 'src/entity/base.entity';
+import { Offer } from 'src/offers/entities/offer.entity';
+import { User } from 'src/users/entities/user.entity';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity()
@@ -24,9 +26,9 @@ export class Wish extends BaseEntity {
   @Column({ length: 1024 })
   description: string;
 
-  // @ManyToOne(() => User, (user) => user.wishes)
-  // owner: User;
+  @ManyToOne(() => User, (user) => user.wishes)
+  owner: User;
 
-  // @OneToMany(() => Offer, (offer) => offer.wish)
-  // offers: Offer[];
+  @OneToMany(() => Offer, (offer) => offer.item)
+  offers: Offer[];
 }

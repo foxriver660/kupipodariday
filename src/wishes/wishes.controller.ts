@@ -9,6 +9,8 @@ import {
   UseGuards,
   UsePipes,
   ValidationPipe,
+  Res,
+  Req,
 } from '@nestjs/common';
 import { WishesService } from './wishes.service';
 import { CreateWishDto } from './dto/create-wish.dto';
@@ -22,8 +24,8 @@ export class WishesController {
   @UseGuards(JwtAuthGuard)
   @Post()
   @UsePipes(new ValidationPipe())
-  create(@Body() createWishDto: CreateWishDto) {
-    return this.wishesService.create(createWishDto);
+  create(@Req() { user }, @Body() createWishDto: CreateWishDto) {
+    return this.wishesService.create(user, createWishDto);
   }
   @Post(':id/copy')
   createCopy(@Param('id') id: string) {

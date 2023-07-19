@@ -17,9 +17,12 @@ export class WishesService {
     private readonly dataSource: DataSource,
   ) {}
 
-  async create(createWishDto: CreateWishDto) {
+  async create(user, createWishDto: CreateWishDto) {
     try {
-      const savedWish = await this.wishRepository.save(createWishDto);
+      const savedWish = await this.wishRepository.save({
+        owner: user,
+        ...createWishDto,
+      });
       return savedWish;
     } catch (error) {
       throw new InternalServerErrorException(error.message);

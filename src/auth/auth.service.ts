@@ -61,13 +61,14 @@ export class AuthService {
     }
     const isValidPassword = await compare(password, user.password);
     if (isValidPassword) {
-      const { password, ...result } = user;
+      const { password, email, ...result } = user;
       return result;
     }
     return null;
   }
   // JWT
   async login(user: any) {
+    console.log(user);
     const payload = { username: user.username, sub: user.id };
     return {
       access_token: this.jwtService.sign(payload),

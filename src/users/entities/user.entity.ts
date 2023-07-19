@@ -1,5 +1,8 @@
 import { BaseEntity } from 'src/entity/base.entity';
-import { Entity, Column, OneToMany, Unique } from 'typeorm';
+import { Offer } from 'src/offers/entities/offer.entity';
+import { Wish } from 'src/wishes/entities/wish.entity';
+import { Wishlist } from 'src/wishlists/entities/wishlist.entity';
+import { Entity, Column, OneToMany, Unique, ManyToOne } from 'typeorm';
 
 @Entity()
 export class User extends BaseEntity {
@@ -15,15 +18,15 @@ export class User extends BaseEntity {
   @Column({ default: 'Пока ничего не рассказал о себе' })
   about: string;
 
-  @Column({ nullable: true })
+  @Column({ default: 'https://i.pravatar.cc/300' })
   avatar: string;
 
-  // @OneToMany(() => Wish, wish => wish.user)
-  // wishes: Wish[];
+  @OneToMany(() => Wish, (wish) => wish.owner)
+  wishes: Wish[];
 
-  // @OneToMany(() => Wish, wish => wish.user)
-  // offers: Wish[];
+  @OneToMany(() => Offer, (offer) => offer.user)
+  offers: Offer[];
 
-  // @ManyToOne(() => Wishlist, wishlist => wishlist.owner)
-  // wishlists: Wishlist[];
+  @OneToMany(() => Wishlist, (wishlist) => wishlist.owner)
+  wishlists: Wishlist[];
 }
