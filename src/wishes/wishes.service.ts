@@ -1,11 +1,24 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
+import { Wish } from './entities/wish.entity';
 
 @Injectable()
 export class WishesService {
-  create(createWishDto: CreateWishDto) {
-    return 'This action adds a new wish';
+  constructor(
+    @InjectRepository(Wish)
+    private wishRepository: Repository<Wish>,
+  ) {}
+
+  async create(createWishDto: CreateWishDto) {
+    try {
+      const savedWish = await this.wishRepository.save(createWishDto);
+      return savedWish;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
   createCopy(createWishDto: CreateWishDto) {
     return 'This action adds a new wish (COPY)';

@@ -9,6 +9,8 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './users/entities/user.entity';
+import { Wishlist } from './wishlists/entities/wishlist.entity';
+import { Wish } from './wishes/entities/wish.entity';
 
 @Module({
   imports: [
@@ -20,7 +22,7 @@ import { User } from './users/entities/user.entity';
       password: 'student',
       database: 'nest_project',
       schema: 'nest_project',
-      entities: [User],
+      entities: [User, Wish],
       synchronize: true,
     }),
     ConfigModule.forRoot({

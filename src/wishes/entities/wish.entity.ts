@@ -1,4 +1,5 @@
-import { BaseEntity, Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import { BaseEntity } from 'src/entity/base.entity';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity()
 export class Wish extends BaseEntity {
@@ -14,7 +15,7 @@ export class Wish extends BaseEntity {
   @Column({ type: 'float' })
   price: number;
 
-  @Column({ type: 'float' })
+  @Column({ default: 0 })
   raised: number;
 
   @Column({ default: 0 })

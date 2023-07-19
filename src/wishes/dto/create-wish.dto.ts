@@ -1,22 +1,26 @@
 import {
+  IsNotEmpty,
   IsNumber,
   IsString,
   IsUrl,
   MaxLength,
   Min,
-  MinLength,
 } from 'class-validator';
 
 export class CreateWishDto {
   @IsString()
-  @MinLength(1)
   @MaxLength(250)
+  @IsNotEmpty()
   name: string;
 
-  @IsUrl()
+  @IsUrl({
+    protocols: ['http', 'https'],
+  })
   link: string;
 
-  @IsUrl()
+  @IsUrl({
+    protocols: ['http', 'https'],
+  })
   image: string;
 
   @IsNumber()
