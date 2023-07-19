@@ -11,6 +11,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './users/entities/user.entity';
 import { Wishlist } from './wishlists/entities/wishlist.entity';
 import { Wish } from './wishes/entities/wish.entity';
+import { Offer } from './offers/entities/offer.entity';
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { Wish } from './wishes/entities/wish.entity';
       password: 'student',
       database: 'nest_project',
       schema: 'nest_project',
-      entities: [User, Wish],
+      entities: [User, Wish, Offer],
       synchronize: true,
     }),
     ConfigModule.forRoot({

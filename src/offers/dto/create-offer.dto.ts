@@ -2,6 +2,7 @@ import {
   IsBoolean,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   Min,
   MinLength,
 } from 'class-validator';
@@ -12,10 +13,11 @@ export class CreateOfferDto {
   @IsNotEmpty()
   amount: number;
 
-  @IsBoolean()
-  hidden: boolean;
-
   @IsNumber()
   @IsNotEmpty()
   itemId: number;
+
+  @IsBoolean()
+  @IsOptional()
+  hidden?: boolean;
 }
