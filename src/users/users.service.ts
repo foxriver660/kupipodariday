@@ -10,28 +10,32 @@ export class UsersService {
     @InjectRepository(User)
     private usersRepository: Repository<User>,
   ) {}
-  /* create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
-  } */
+
   async findById(id: number) {
     const user = await this.usersRepository.findOne({ where: { id } });
     const { password, ...result } = user;
     return result;
   }
-  findMyWishes() {
-    return `This action returns My Wishes`;
+
+  async findByUserName(username: string) {
+    const user = await this.usersRepository.findOne({ where: { username } });
+    const { password, ...result } = user;
+    return result;
   }
-  findByUserName(username: string) {
-    return `This action returns a #${username} user`;
-  }
-  findByUserWishes(username: string) {
-    return `This action returns a #${username} user`;
-  }
+
   async update(id: number, updateUserDto: UpdateUserDto) {
     try {
       await this.usersRepository.update(id, updateUserDto);
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
+  }
+  // TODO доделать после добавления связи
+  findByUserWishes(username: string) {
+    return `This action returns a #${username} user`;
+  }
+  // TODO доделать после добавления связи
+  findMyWishes() {
+    return `This action returns My Wishes`;
   }
 }
