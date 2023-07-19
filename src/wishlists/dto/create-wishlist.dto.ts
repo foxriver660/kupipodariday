@@ -1,18 +1,18 @@
-import { IsArray, IsInt, IsString, IsUrl } from 'class-validator';
+import { IsArray, IsInt, IsOptional, IsString, IsUrl } from 'class-validator';
 
 export class CreateWishlistDto {
   @IsString()
-  name: string;
+  @IsOptional()
+  name?: string;
 
-  @IsUrl(
-    {
-      protocols: ['http', 'https'],
-    },
-    { message: 'Image should be a valid URL' },
-  )
-  image: string;
+  @IsUrl({
+    protocols: ['http', 'https'],
+  })
+  @IsOptional()
+  image?: string;
 
   @IsArray()
+  @IsOptional()
   @IsInt({ each: true })
-  itemsId: number[];
+  itemsId?: number[];
 }

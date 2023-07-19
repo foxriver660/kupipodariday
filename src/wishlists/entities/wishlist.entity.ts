@@ -3,10 +3,10 @@ import { Entity, Column, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity()
 export class Wishlist extends BaseEntity {
-  @Column({ length: 250 })
+  @Column({ length: 250, default: 'Мой вишлист' })
   name: string;
 
-  @Column()
+  @Column({ default: 'https://i.pravatar.cc/150?img=3' })
   image: string;
 
   // @ManyToOne(() => User, (user) => user.wishlists)

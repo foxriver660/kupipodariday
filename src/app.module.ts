@@ -23,7 +23,7 @@ import { Offer } from './offers/entities/offer.entity';
       password: 'student',
       database: 'nest_project',
       schema: 'nest_project',
-      entities: [User, Wish, Offer],
+      entities: [User, Wish, Offer, Wishlist],
       synchronize: true,
     }),
     ConfigModule.forRoot({
