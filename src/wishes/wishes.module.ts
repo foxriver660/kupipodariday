@@ -11,5 +11,6 @@ import { UsersModule } from 'src/users/users.module';
   imports: [TypeOrmModule.forFeature([Wish, Offer, User]), UsersModule],
   controllers: [WishesController],
   providers: [WishesService],
+  exports: [WishesService],
 })
 export class WishesModule {}

@@ -9,6 +9,7 @@ import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { DataSource, Repository } from 'typeorm';
 import { CreateWishDto } from './dto/create-wish.dto';
+import { UpdateRaiseWishDto } from './dto/update-raise-wish-copy.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
 import { Wish } from './entities/wish.entity';
 
@@ -103,9 +104,12 @@ export class WishesService {
     }
   } */
 
-  async findById(id: number) {
+  async findById(id: number, relations?) {
     try {
-      const findWish = await this.wishRepository.findOne({ where: { id } });
+      const findWish = await this.wishRepository.findOne({
+        where: { id },
+        relations: [relations],
+      });
       if (!findWish) {
         throw new NotFoundException('Requested wish was not found');
       }
@@ -115,7 +119,7 @@ export class WishesService {
     }
   }
 
-  async update(id: number, updateWishDto: UpdateWishDto) {
+  async update(id: number, updateWishDto: UpdateWishDto | UpdateRaiseWishDto) {
     try {
       const updateResult = await this.wishRepository.update(id, updateWishDto);
       if (updateResult.affected === 0) {

@@ -1,10 +1,12 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { WishesService } from 'src/wishes/wishes.service';
+import { DataSource, Repository } from 'typeorm';
 import { CreateOfferDto } from './dto/create-offer.dto';
 import { Offer } from './entities/offer.entity';
 
@@ -13,19 +15,43 @@ export class OffersService {
   constructor(
     @InjectRepository(Offer)
     private offerRepository: Repository<Offer>,
+    private wishesService: WishesService,
+    private readonly dataSource: DataSource,
   ) {}
 
-  // TODO допилить логику с донатами, и наверно подгружать виши
   async create(user, createOfferDto: CreateOfferDto) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
     try {
+      const wish = await this.wishesService.findById(
+        createOfferDto.itemId,
+        'owner',
+      );
+      if (!wish) {
+        throw new NotFoundException('Requested wish was not found');
+      }
+      if (user.id === wish.owner.id) {
+        throw new BadRequestException('You cant spend money on your wishes');
+      }
+      if (wish.raised + createOfferDto.amount > wish.price) {
+        throw new BadRequestException('Donate is too big, reduce the amount');
+      }
+      await this.wishesService.update(wish.id, {
+        raised: createOfferDto.amount,
+      });
       const savedOffer = await this.offerRepository.save({
         user,
-        item: { id: createOfferDto.itemId },
+        item: wish,
         amount: createOfferDto.amount,
       });
+      await queryRunner.commitTransaction();
       return savedOffer;
     } catch (error) {
+      await queryRunner.rollbackTransaction();
       throw new InternalServerErrorException(error.message);
+    } finally {
+      await queryRunner.release();
     }
   }
 
