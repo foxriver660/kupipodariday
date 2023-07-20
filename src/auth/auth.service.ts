@@ -43,16 +43,19 @@ export class AuthService {
   }
 
   // LOCAL STRATEGY
-  async validateUser({ username, password }: SigninUserDto) {
-    const user = await this.usersRepository.findOneBy({
-      username,
+  async validateUser(signinUserDto: SigninUserDto) {
+    const user = await this.usersRepository.findOne({
+      where: { username: signinUserDto.username },
     });
     if (!user) {
       throw new UnauthorizedException(
         '[U]Authorization error, please check the correctness of the data entered',
       );
     }
-    const isValidPassword = await compare(password, user.password);
+    const isValidPassword = await compare(
+      signinUserDto.password,
+      user.password,
+    );
     if (isValidPassword) {
       const { password, email, ...result } = user;
       return result;
