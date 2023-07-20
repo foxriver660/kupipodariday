@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { AuthService } from 'src/auth/auth.service';
 import { Repository } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -13,53 +14,57 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    private authService: AuthService,
   ) {}
 
-  async findBy<T>(key: keyof T, value: number | string) {
+  async findBy<T>(value: number | string, key?: keyof T) {
     try {
-      const userW = await this.usersRepository.findOne({
-        where: { [key]: value },
-        relations: ['wishes'],
-      });
-      console.log(userW.wishes);
       const user = await this.usersRepository.findOne({
-        where: { [key]: value },
+        where: {
+          [key ||
+          (typeof value === 'string' && value.includes('@')
+            ? 'email'
+            : 'username')]: value,
+        },
       });
       if (!user) {
         throw new NotFoundException('User not found');
       }
       const { password, ...result } = user;
-      return result;
+      return key ? result : [result];
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
   }
 
-  //! СТАРЫЙ КОД ПОТЕСТИТЬ УДАЛИТЬ
-  /*  async findById(id: number) {
-    const user = await this.usersRepository.findOne({ where: { id } });
-    const { password, ...result } = user;
-    return result;
-  }
-  async findByUserName(username: string) {
-    const user = await this.usersRepository.findOne({ where: { username } });
-    const { password, ...result } = user;
-    return result;
-  } */
-
-  async update(updateUserDto: UpdateUserDto, id: number) {
+  async update(id: number, updateUserDto: UpdateUserDto) {
     try {
-      await this.usersRepository.update(id, updateUserDto);
+      if (updateUserDto.password) {
+        const genUser =
+          await this.authService.generateUserWithHashPass<UpdateUserDto>(
+            updateUserDto,
+          );
+        await this.usersRepository.update(id, genUser);
+      } else {
+        await this.usersRepository.update(id, updateUserDto);
+      }
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
   }
-  // TODO доделать после добавления связи
-  findByUserWishes(username: string) {
-    return `This action returns a #${username} user`;
-  }
-  // TODO доделать после добавления связи
-  findMyWishes() {
-    return `This action returns My Wishes`;
+
+  async findUserWishes(username: string) {
+    try {
+      const userWishes = await this.usersRepository.findOne({
+        where: { username: username },
+        relations: ['wishes'],
+      });
+      if (!userWishes) {
+        throw new NotFoundException('User not found');
+      }
+      return userWishes.wishes;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 }

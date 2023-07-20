@@ -15,47 +15,48 @@ import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { User } from './entities/user.entity';
+import { FindUsersDto } from './dto/find-users.dto';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  // TODO делать
-  /*  @Post('find')
-  create(@Body() createUserDto: CreateUserDto) {
-    console.log('post users/find', createUserDto);
-    return this.usersService.create(createUserDto);
-  } */
+  @UseGuards(JwtAuthGuard)
+  @Post('find')
+  create(@Body() { query }: FindUsersDto) {
+    return this.usersService.findBy<User>(query);
+  }
 
   @UseGuards(JwtAuthGuard)
   @Get('me')
   findMe(@Request() { user: { id } }) {
-    return this.usersService.findBy<User>('id', id);
+    console.log(id);
+    return this.usersService.findBy<User>(id, 'id');
   }
 
   @UseGuards(JwtAuthGuard)
   @Get(':username')
   findByUserName(@Param('username') username: string) {
-    return this.usersService.findBy<User>('username', username);
+    return this.usersService.findBy<User>(username, 'username');
   }
 
   @UseGuards(JwtAuthGuard)
   @UsePipes(new ValidationPipe())
   @Patch('me')
   update(@Request() { user: { id } }, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(updateUserDto, id);
+    return this.usersService.update(id, updateUserDto);
   }
 
-  // TODO доделать после добавления связи
+  @UseGuards(JwtAuthGuard)
   @Get('me/wishes')
-  findMyWishes() {
-    console.log('get users/me/wishes');
-    return this.usersService.findMyWishes();
+  findMyWishes(@Request() { user: { username } }) {
+    console.log(username);
+    return this.usersService.findUserWishes(username);
   }
-  // TODO доделать после добавления связи
+
+  @UseGuards(JwtAuthGuard)
   @Get(':username/wishes')
   findByUserWishes(@Param('username') username: string) {
-    console.log('get users/:username/wishes', username);
-    return this.usersService.findByUserWishes(username);
+    return this.usersService.findUserWishes(username);
   }
 }

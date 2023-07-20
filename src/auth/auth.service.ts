@@ -21,7 +21,9 @@ export class AuthService {
   ) {}
   async register(createUserDto: CreateUserDto) {
     try {
-      const genUser = await this.generateUserWithHashPass(createUserDto);
+      const genUser = await this.generateUserWithHashPass<CreateUserDto>(
+        createUserDto,
+      );
       const savedUser = await this.usersRepository.save(genUser);
       const { password, ...result } = savedUser;
       return result as SignupResponseDto;
@@ -36,7 +38,11 @@ export class AuthService {
     }
   }
   async login(user: { username: string; id: string }) {
-    const payload = { username: user.username, sub: user.id };
+    console.log(user);
+    const payload = {
+      username: user.username.split(' ').join(' '),
+      sub: user.id,
+    };
     return {
       access_token: this.jwtService.sign(payload),
     };
@@ -71,7 +77,7 @@ export class AuthService {
     return await hash(password, salt);
   }
   // ОБЩИЙ МЕТОД HASH
-  async generateUserWithHashPass(dto: CreateUserDto) {
+  async generateUserWithHashPass<T extends { password?: string }>(dto: T) {
     const salt = await this.generateSalt(10);
     const hashedPassword = await this.hashPassword(dto.password, salt);
     return {
