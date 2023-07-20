@@ -24,13 +24,13 @@ export class WishesService {
   // TODO подумать над owner сейчас сохраняется только id и username из пэйлоуда токена
   async create(user, createWishDto: CreateWishDto) {
     try {
-      const owner = await this.usersService.findBy<User>(user.id, 'id');
+      // ПОДУМАТЬ
+      /* const owner = await this.usersService.findBy<User>(user.id, 'id'); */
 
       const savedWish = await this.wishRepository.save({
         owner: user,
         ...createWishDto,
       });
-      console.log(owner);
       return savedWish;
     } catch (error) {
       throw new InternalServerErrorException(error.message);

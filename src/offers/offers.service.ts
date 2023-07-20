@@ -15,9 +15,14 @@ export class OffersService {
     private offerRepository: Repository<Offer>,
   ) {}
 
-  async create(createOfferDto: CreateOfferDto) {
+  // TODO допилить логику с донатами, и наверно подгружать виши
+  async create(user, createOfferDto: CreateOfferDto) {
     try {
-      const savedOffer = await this.offerRepository.save(createOfferDto);
+      const savedOffer = await this.offerRepository.save({
+        user,
+        item: { id: createOfferDto.itemId },
+        amount: createOfferDto.amount,
+      });
       return savedOffer;
     } catch (error) {
       throw new InternalServerErrorException(error.message);
@@ -26,7 +31,12 @@ export class OffersService {
 
   async findAll() {
     try {
-      const allOffers = await this.offerRepository.find();
+      const allOffers = await this.offerRepository.find({
+        relations: ['item', 'user'],
+      });
+      if (!allOffers) {
+        throw new NotFoundException('Offers not found');
+      }
       return allOffers;
     } catch (error) {
       throw new InternalServerErrorException(error.message);
@@ -35,7 +45,10 @@ export class OffersService {
 
   async findById(id: number) {
     try {
-      const findOffer = await this.offerRepository.findOne({ where: { id } });
+      const findOffer = await this.offerRepository.findOne({
+        where: { id },
+        relations: ['item', 'user'],
+      });
       if (!findOffer) {
         throw new NotFoundException('Requested offer was not found');
       }
