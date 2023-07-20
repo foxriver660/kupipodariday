@@ -21,24 +21,10 @@ export class AuthService {
   ) {}
   async register(createUserDto: CreateUserDto) {
     try {
-      const salt = await genSalt(10);
-      const newUser = {
-        ...createUserDto,
-        password: await hash(createUserDto.password, salt),
-      };
-      const savedUser = await this.usersRepository.save(newUser);
-      const { id, username, email, about, avatar, createdAt, updatedAt } =
-        savedUser;
-      const signupResponseDto: SignupResponseDto = {
-        id,
-        username,
-        email,
-        about,
-        avatar,
-        createdAt,
-        updatedAt,
-      };
-      return signupResponseDto;
+      const genUser = await this.generateUserWithHashPass(createUserDto);
+      const savedUser = await this.usersRepository.save(genUser);
+      const { password, ...result } = savedUser;
+      return result as SignupResponseDto;
     } catch (error) {
       if (error instanceof QueryFailedError) {
         throw new BadRequestException(
@@ -49,7 +35,14 @@ export class AuthService {
       }
     }
   }
+  async login(user: { username: string; id: string }) {
+    const payload = { username: user.username, sub: user.id };
+    return {
+      access_token: this.jwtService.sign(payload),
+    };
+  }
 
+  // LOCAL STRATEGY
   async validateUser({ username, password }: SigninUserDto) {
     const user = await this.usersRepository.findOneBy({
       username,
@@ -66,12 +59,21 @@ export class AuthService {
     }
     return null;
   }
-  // JWT
-  async login(user: any) {
-    console.log(user);
-    const payload = { username: user.username, sub: user.id };
+  // ВСПОМОГАТЕЛЬНЫЙ КОД
+  async generateSalt(rounds: number): Promise<string> {
+    return await genSalt(rounds);
+  }
+
+  async hashPassword(password: string, salt: string): Promise<string> {
+    return await hash(password, salt);
+  }
+  // ОБЩИЙ МЕТОД HASH
+  async generateUserWithHashPass(dto: CreateUserDto) {
+    const salt = await this.generateSalt(10);
+    const hashedPassword = await this.hashPassword(dto.password, salt);
     return {
-      access_token: this.jwtService.sign(payload),
+      ...dto,
+      password: hashedPassword,
     };
   }
 }

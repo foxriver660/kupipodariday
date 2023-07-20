@@ -18,15 +18,16 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @UseGuards(LocalAuthGuard)
+  @UsePipes(new ValidationPipe())
   @HttpCode(HttpStatus.OK)
   @Post('signin')
-  async login(@Request() req) {
-    return this.authService.login(req.user);
+  async signin(@Request() { user }) {
+    return this.authService.login(user);
   }
 
   @Post('signup')
   @UsePipes(new ValidationPipe())
-  register(@Body() createUserDto: CreateUserDto) {
+  async signup(@Body() createUserDto: CreateUserDto) {
     return this.authService.register(createUserDto);
   }
 }
