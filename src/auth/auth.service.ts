@@ -38,7 +38,6 @@ export class AuthService {
     }
   }
   async login(user: { username: string; id: string }) {
-    console.log(user);
     const payload = {
       username: user.username.split(' ').join(' '),
       sub: user.id,

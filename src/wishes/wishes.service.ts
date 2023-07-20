@@ -1,9 +1,12 @@
 import {
+  ForbiddenException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'src/users/entities/user.entity';
+import { UsersService } from 'src/users/users.service';
 import { DataSource, Repository } from 'typeorm';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
@@ -14,21 +17,26 @@ export class WishesService {
   constructor(
     @InjectRepository(Wish)
     private wishRepository: Repository<Wish>,
+    private usersService: UsersService,
     private readonly dataSource: DataSource,
   ) {}
 
+  // TODO подумать над owner сейчас сохраняется только id и username из пэйлоуда токена
   async create(user, createWishDto: CreateWishDto) {
     try {
+      const owner = await this.usersService.findBy<User>(user.id, 'id');
+
       const savedWish = await this.wishRepository.save({
         owner: user,
         ...createWishDto,
       });
+      console.log(owner);
       return savedWish;
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
   }
-  async createCopy(id: number) {
+  async createCopy(user, id: number) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -45,7 +53,10 @@ export class WishesService {
         copied,
         ...result
       } = copiedWish;
-      const savedWish = await this.wishRepository.save(result);
+      const savedWish = await this.wishRepository.save({
+        ...result,
+        owner: user,
+      });
       if (!savedWish) {
         throw new InternalServerErrorException(
           'Failed to save a copy of the wish',
@@ -68,9 +79,9 @@ export class WishesService {
       await queryRunner.release();
     }
   }
-  // TODO непонятно по заданию либо ласт или отсортировано с ласта
-  async findSortedWishes(sortOrder: 'ASC' | 'DESC'): Promise<Wish[]> {
-    const order = { createdAt: sortOrder };
+
+  async findPopularWishes(sortOrder: 'ASC' | 'DESC'): Promise<Wish[]> {
+    const order = { copied: sortOrder };
     try {
       const wishes = await this.wishRepository.find({ order });
       return wishes;
@@ -78,8 +89,8 @@ export class WishesService {
       throw new InternalServerErrorException(error.message);
     }
   }
-  // TODO непонятно по заданию либо ласт или отсортировано с ласта
-  async findWish(sortOrder: 'ASC' | 'DESC'): Promise<Wish[]> {
+  //! скорее всего на удаление
+  /*  async findWish(sortOrder: 'ASC' | 'DESC'): Promise<Wish[]> {
     const order = { createdAt: sortOrder };
     try {
       const wishes = await this.wishRepository.findOne({
@@ -90,7 +101,7 @@ export class WishesService {
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
-  }
+  } */
 
   async findById(id: number) {
     try {
@@ -115,12 +126,16 @@ export class WishesService {
     }
   }
 
-  async remove(id: number) {
+  async remove(user, id: number) {
     try {
-      const removedWish = await this.wishRepository.delete(id);
-      if (removedWish.affected !== 1) {
+      const deletedWish = await this.findById(id);
+      if (deletedWish) {
         throw new NotFoundException('Requested wish was not found');
       }
+      if (user.id !== deletedWish.owner.id) {
+        throw new ForbiddenException('You cant remove not your wish');
+      }
+      await this.wishRepository.delete(id);
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }

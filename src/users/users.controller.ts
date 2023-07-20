@@ -50,7 +50,6 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Get('me/wishes')
   findMyWishes(@Request() { user: { username } }) {
-    console.log(username);
     return this.usersService.findUserWishes(username);
   }
 

@@ -28,22 +28,20 @@ export class WishesController {
     return this.wishesService.create(user, createWishDto);
   }
   @Post(':id/copy')
-  createCopy(@Param('id') id: string) {
-    return this.wishesService.createCopy(+id);
+  createCopy(@Req() { user }, @Param('id') id: string) {
+    return this.wishesService.createCopy(user, +id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('last')
   findLast() {
-    console.log('get wishes/last');
-    return this.wishesService.findWish('DESC');
+    return this.wishesService.findPopularWishes('DESC');
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('top')
   findTop() {
-    console.log('get wishes/top');
-    return this.wishesService.findWish('ASC');
+    return this.wishesService.findPopularWishes('ASC');
   }
 
   @UseGuards(JwtAuthGuard)
@@ -61,8 +59,8 @@ export class WishesController {
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Req() { user }, @Param('id') id: string) {
     console.log('delete wishes/:id', `id: ${id}`);
-    return this.wishesService.remove(+id);
+    return this.wishesService.remove(user, +id);
   }
 }
