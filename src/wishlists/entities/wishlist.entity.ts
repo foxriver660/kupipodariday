@@ -1,4 +1,4 @@
-import { BaseEntity } from 'src/entity/base.entity';
+import { BasicEntity } from 'src/entity/base.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Wish } from 'src/wishes/entities/wish.entity';
 import {
@@ -11,7 +11,7 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class Wishlist extends BaseEntity {
+export class Wishlist extends BasicEntity {
   @Column({ length: 250, default: 'Мой вишлист' })
   name: string;
 

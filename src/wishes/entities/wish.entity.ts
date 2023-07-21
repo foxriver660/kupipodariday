@@ -1,10 +1,10 @@
-import { BaseEntity } from 'src/entity/base.entity';
+import { BasicEntity } from 'src/entity/base.entity';
 import { Offer } from 'src/offers/entities/offer.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity()
-export class Wish extends BaseEntity {
+export class Wish extends BasicEntity {
   @Column({ length: 250 })
   name: string;
 
