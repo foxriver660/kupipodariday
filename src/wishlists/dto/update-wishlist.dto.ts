@@ -1,10 +1,11 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { IsArray, IsInt, IsString, IsUrl } from 'class-validator';
+import { IsArray, IsInt, IsOptional, IsString, IsUrl } from 'class-validator';
 import { CreateWishlistDto } from './create-wishlist.dto';
 
 export class UpdateWishlistDto extends PartialType(CreateWishlistDto) {
   @IsString()
-  name: string;
+  @IsOptional()
+  name?: string;
 
   @IsUrl(
     {
@@ -12,9 +13,11 @@ export class UpdateWishlistDto extends PartialType(CreateWishlistDto) {
     },
     { message: 'Image should be a valid URL' },
   )
-  image: string;
+  @IsOptional()
+  image?: string;
 
   @IsArray()
+  @IsOptional()
   @IsInt({ each: true })
-  itemsId: number[];
+  itemsId?: number[];
 }

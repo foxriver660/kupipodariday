@@ -18,10 +18,10 @@ export class Wishlist extends BaseEntity {
   @Column({ default: 'https://i.pravatar.cc/150?img=3' })
   image: string;
 
+  @ManyToOne(() => User, (user) => user.wishlists)
+  owner: User;
+
   @ManyToMany(() => Wish, (wish) => wish.name)
   @JoinTable()
   items: Wish[];
-
-  @ManyToOne(() => User, (user) => user.wishlists)
-  owner: User;
 }

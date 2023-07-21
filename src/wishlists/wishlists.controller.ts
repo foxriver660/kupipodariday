@@ -9,6 +9,7 @@ import {
   UseGuards,
   UsePipes,
   ValidationPipe,
+  Req,
 } from '@nestjs/common';
 import { WishlistsService } from './wishlists.service';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
@@ -22,8 +23,8 @@ export class WishlistsController {
   @UseGuards(JwtAuthGuard)
   @Post()
   @UsePipes(new ValidationPipe())
-  create(@Body() createWishlistDto: CreateWishlistDto) {
-    return this.wishlistsService.create(createWishlistDto);
+  create(@Req() { user }, @Body() createWishlistDto: CreateWishlistDto) {
+    return this.wishlistsService.create(user, createWishlistDto);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -35,7 +36,7 @@ export class WishlistsController {
   @UseGuards(JwtAuthGuard)
   @Get(':id')
   findById(@Param('id') id: string) {
-    return this.wishlistsService.findById(+id);
+    return this.wishlistsService.findById(+id, ['owner', 'items']);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -50,7 +51,7 @@ export class WishlistsController {
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.wishlistsService.remove(+id);
+  remove(@Req() { user }, @Param('id') id: string) {
+    return this.wishlistsService.remove(user, +id);
   }
 }

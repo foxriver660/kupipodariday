@@ -7,7 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, In, Repository } from 'typeorm';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateRaiseWishDto } from './dto/update-raise-wish-copy.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
@@ -90,35 +90,32 @@ export class WishesService {
       throw new InternalServerErrorException(error.message);
     }
   }
-  //! скорее всего на удаление
-  /*  async findWish(sortOrder: 'ASC' | 'DESC'): Promise<Wish[]> {
-    const order = { createdAt: sortOrder };
-    try {
-      const wishes = await this.wishRepository.findOne({
-        where: {},
-        order,
-      });
-      return [wishes];
-    } catch (error) {
-      throw new InternalServerErrorException(error.message);
-    }
-  } */
-
   async findById(id: number, relations?) {
     try {
-      const findWish = await this.wishRepository.findOne({
+      const wish = await this.wishRepository.findOne({
         where: { id },
         relations: [relations],
       });
-      if (!findWish) {
+      if (!wish) {
         throw new NotFoundException('Requested wish was not found');
       }
-      return findWish;
+      return wish;
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
   }
+  async findWishesByIds(ids: number[]) {
+    const wishes = await this.wishRepository.find({
+      where: { id: In(ids) },
+    });
 
+    if (wishes.length !== ids.length) {
+      const missingIds = ids.filter((id) => !wishes.some((e) => e.id === id));
+      throw new NotFoundException(`Entities with ids ${missingIds} not found`);
+    }
+
+    return wishes;
+  }
   async update(id: number, updateWishDto: UpdateWishDto | UpdateRaiseWishDto) {
     try {
       const updateResult = await this.wishRepository.update(id, updateWishDto);
