@@ -5,6 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UserPublicProfileResponseDto } from 'src/users/dto/response-dto/user-public-profile.dto';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { DataSource, In, Repository } from 'typeorm';
@@ -26,10 +27,16 @@ export class WishesService {
   async create(user, createWishDto: CreateWishDto) {
     try {
       // ПОДУМАТЬ
-      /* const owner = await this.usersService.findBy<User>(user.id, 'id'); */
+      const owner =
+        (await this.usersService.findBy<UserPublicProfileResponseDto>(
+          user.id,
+          'id',
+        )) as User;
+      console.log('OWNER: ', owner);
+      console.log('USER: ', user);
 
       const savedWish = await this.wishRepository.save({
-        owner: user,
+        owner: owner,
         ...createWishDto,
       });
       return savedWish;
@@ -82,8 +89,8 @@ export class WishesService {
   }
 
   async findPopularWishes(sortOrder: 'ASC' | 'DESC'): Promise<Wish[]> {
-    const order = { copied: sortOrder };
     try {
+      const order = { copied: sortOrder };
       const wishes = await this.wishRepository.find({ order });
       return wishes;
     } catch (error) {
@@ -105,16 +112,20 @@ export class WishesService {
     }
   }
   async findWishesByIds(ids: number[]) {
-    const wishes = await this.wishRepository.find({
-      where: { id: In(ids) },
-    });
-
-    if (wishes.length !== ids.length) {
-      const missingIds = ids.filter((id) => !wishes.some((e) => e.id === id));
-      throw new NotFoundException(`Entities with ids ${missingIds} not found`);
+    try {
+      const wishes = await this.wishRepository.find({
+        where: { id: In(ids) },
+      });
+      if (wishes.length !== ids.length) {
+        const missingIds = ids.filter((id) => !wishes.some((e) => e.id === id));
+        throw new NotFoundException(
+          `Entities with ids ${missingIds} not found`,
+        );
+      }
+      return wishes;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
     }
-
-    return wishes;
   }
   async update(id: number, updateWishDto: UpdateWishDto | UpdateRaiseWishDto) {
     try {

@@ -1,7 +1,7 @@
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { BasicEntity } from 'src/entity/base.entity';
 import { Offer } from 'src/offers/entities/offer.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity()
 export class Wish extends BasicEntity {

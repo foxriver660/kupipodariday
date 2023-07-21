@@ -11,6 +11,7 @@ import {
   IsDateString,
 } from 'class-validator';
 import { Type } from 'class-transformer';
+import { Offer } from 'src/offers/entities/offer.entity';
 // import { Offer } from './offer.dto';
 
 export class UserWishesDto {
@@ -50,8 +51,7 @@ export class UserWishesDto {
   @MaxLength(1024)
   description: string;
 
-  // @IsArray()
-  // @ValidateNested({ each: true })
-  // @Type(() => Offer)
-  // offers: Offer[];
+  @IsArray()
+  @ValidateNested({ each: true })
+  offers: Offer[];
 }
