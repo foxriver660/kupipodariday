@@ -21,27 +21,27 @@ import { FindUsersDto } from './dto/find-users.dto';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  // TODO доделать
   @UseGuards(JwtAuthGuard)
   @Post('find')
   create(@Body() { query }: FindUsersDto) {
-    return this.usersService.findBy<User>(query);
+    return this.usersService.findByQuery(query);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('me')
   findMe(@Request() { user: { id } }) {
     console.log(id);
-    return this.usersService.findBy<User>(id, 'id');
+    return this.usersService.findByIdOrName(id, 'id');
   }
 
   @UseGuards(JwtAuthGuard)
   @Get(':username')
   findByUserName(@Param('username') username: string) {
-    return this.usersService.findBy<User>(username, 'username');
+    return this.usersService.findByIdOrName(username, 'username');
   }
 
   @UseGuards(JwtAuthGuard)
-  @UsePipes(new ValidationPipe())
   @Patch('me')
   update(@Request() { user: { id } }, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(id, updateUserDto);

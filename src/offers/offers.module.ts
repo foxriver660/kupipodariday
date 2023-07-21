@@ -6,9 +6,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Wish } from 'src/wishes/entities/wish.entity';
 import { User } from 'src/users/entities/user.entity';
 import { WishesModule } from 'src/wishes/wishes.module';
+import { UsersModule } from 'src/users/users.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Offer, Wish, User]), WishesModule],
+  imports: [
+    TypeOrmModule.forFeature([Offer, Wish, User]),
+    WishesModule,
+    UsersModule,
+  ],
   controllers: [OffersController],
   providers: [OffersService],
 })

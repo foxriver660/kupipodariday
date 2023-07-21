@@ -19,15 +19,14 @@ export class WishlistsService {
     private wishesService: WishesService,
   ) {}
 
-  async create(user, createWishlistDto: CreateWishlistDto) {
+  async create(owner, createWishlistDto: CreateWishlistDto) {
     try {
-      console.log(createWishlistDto.itemsId);
       const wishes = createWishlistDto.itemsId
         ? await this.wishesService.findWishesByIds(createWishlistDto.itemsId)
         : [];
       const savedWishlist = await this.wishlistRepository.save({
         items: wishes,
-        owner: user,
+        owner,
         ...createWishlistDto,
       });
       return savedWishlist;

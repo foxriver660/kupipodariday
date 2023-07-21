@@ -28,8 +28,8 @@ export class UserProfileResponseDto {
   email: string;
 
   @IsDateString()
-  createdAt: string;
+  createdAt: Date;
 
   @IsDateString()
-  updatedAt: string;
+  updatedAt: Date;
 }

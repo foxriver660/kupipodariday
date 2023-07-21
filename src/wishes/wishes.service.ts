@@ -5,9 +5,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserPublicProfileResponseDto } from 'src/users/dto/response-dto/user-public-profile.dto';
-import { User } from 'src/users/entities/user.entity';
-import { UsersService } from 'src/users/users.service';
 import { DataSource, In, Repository } from 'typeorm';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateRaiseWishDto } from './dto/update-raise-wish-copy.dto';
@@ -19,24 +16,14 @@ export class WishesService {
   constructor(
     @InjectRepository(Wish)
     private wishRepository: Repository<Wish>,
-    private usersService: UsersService,
     private readonly dataSource: DataSource,
   ) {}
 
-  // TODO подумать над owner сейчас сохраняется только id и username из пэйлоуда токена
-  async create(user, createWishDto: CreateWishDto) {
+  async create(owner, createWishDto: CreateWishDto) {
+    console.log(owner);
     try {
-      // ПОДУМАТЬ
-      const owner =
-        (await this.usersService.findBy<UserPublicProfileResponseDto>(
-          user.id,
-          'id',
-        )) as User;
-      console.log('OWNER: ', owner);
-      console.log('USER: ', user);
-
       const savedWish = await this.wishRepository.save({
-        owner: owner,
+        owner,
         ...createWishDto,
       });
       return savedWish;
@@ -44,7 +31,7 @@ export class WishesService {
       throw new InternalServerErrorException(error.message);
     }
   }
-  async createCopy(user, id: number) {
+  async createCopy(owner, id: number) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -63,7 +50,7 @@ export class WishesService {
       } = copiedWish;
       const savedWish = await this.wishRepository.save({
         ...result,
-        owner: user,
+        owner,
       });
       if (!savedWish) {
         throw new InternalServerErrorException(

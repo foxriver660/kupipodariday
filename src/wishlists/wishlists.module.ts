@@ -5,9 +5,14 @@ import { Wishlist } from './entities/wishlist.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { WishesModule } from 'src/wishes/wishes.module';
+import { UsersModule } from 'src/users/users.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Wishlist, User]), WishesModule],
+  imports: [
+    TypeOrmModule.forFeature([Wishlist, User]),
+    WishesModule,
+    UsersModule,
+  ],
   controllers: [WishlistsController],
   providers: [WishlistsService],
 })

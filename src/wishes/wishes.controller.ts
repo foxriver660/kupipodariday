@@ -11,22 +11,27 @@ import {
   ValidationPipe,
   Res,
   Req,
+  UseInterceptors,
 } from '@nestjs/common';
 import { WishesService } from './wishes.service';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { OwnerInterceptor } from 'src/interceptor/owner.interceptor';
 
 @Controller('wishes')
 export class WishesController {
   constructor(private readonly wishesService: WishesService) {}
 
   @UseGuards(JwtAuthGuard)
+  @UseInterceptors(OwnerInterceptor)
   @Post()
-  @UsePipes(new ValidationPipe())
   create(@Req() { user }, @Body() createWishDto: CreateWishDto) {
     return this.wishesService.create(user, createWishDto);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(OwnerInterceptor)
   @Post(':id/copy')
   createCopy(@Req() { user }, @Param('id') id: string) {
     return this.wishesService.createCopy(user, +id);

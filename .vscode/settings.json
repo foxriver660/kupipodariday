@@ -5,6 +5,7 @@
     "nestjs",
     "Safonov",
     "signin",
-    "typeorm"
+    "typeorm",
+    "wishlistlists"
   ]
 }

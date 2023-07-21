@@ -6,6 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthService } from 'src/auth/auth.service';
 import { Repository } from 'typeorm';
+import { UserProfileResponseDto } from './dto/response-dto/user-profile.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 
@@ -17,21 +18,36 @@ export class UsersService {
     private authService: AuthService,
   ) {}
 
-  async findBy<T>(value: number | string, key?: keyof T) {
+  async findByIdOrName(
+    value: number | string,
+    key: 'id' | 'username',
+  ): Promise<UserProfileResponseDto> {
+    try {
+      const { password, wishes, offers, wishlists, ...user } =
+        await this.usersRepository.findOne({
+          where: { [key]: value },
+        });
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+      return user;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+  // TODO скорректировать
+  async findByQuery(value: string) {
     try {
       const user = await this.usersRepository.findOne({
         where: {
-          [key ||
-          (typeof value === 'string' && value.includes('@')
-            ? 'email'
-            : 'username')]: value,
+          [value.includes('@') ? 'email' : 'username']: value,
         },
       });
       if (!user) {
         throw new NotFoundException('User not found');
       }
       const { password, ...result } = user;
-      return key ? result : [result];
+      return [result];
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }

@@ -10,19 +10,21 @@ import {
   UsePipes,
   ValidationPipe,
   Req,
+  UseInterceptors,
 } from '@nestjs/common';
 import { WishlistsService } from './wishlists.service';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
 import { UpdateWishlistDto } from './dto/update-wishlist.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { OwnerInterceptor } from 'src/interceptor/owner.interceptor';
 
-@Controller('wishlists')
+@Controller('wishlistlists')
 export class WishlistsController {
   constructor(private readonly wishlistsService: WishlistsService) {}
 
   @UseGuards(JwtAuthGuard)
+  @UseInterceptors(OwnerInterceptor)
   @Post()
-  @UsePipes(new ValidationPipe())
   create(@Req() { user }, @Body() createWishlistDto: CreateWishlistDto) {
     return this.wishlistsService.create(user, createWishlistDto);
   }
@@ -41,7 +43,6 @@ export class WishlistsController {
 
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
-  @UsePipes(new ValidationPipe())
   update(
     @Param('id') id: string,
     @Body() updateWishlistDto: UpdateWishlistDto,

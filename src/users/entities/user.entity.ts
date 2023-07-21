@@ -1,8 +1,9 @@
-import { Entity, Column, OneToMany } from 'typeorm';
+import { Entity, Column, OneToMany, BeforeInsert, SaveOptions } from 'typeorm';
 import { BasicEntity } from 'src/entity/base.entity';
 import { Offer } from 'src/offers/entities/offer.entity';
 import { Wish } from 'src/wishes/entities/wish.entity';
 import { Wishlist } from 'src/wishlists/entities/wishlist.entity';
+import { IsNotEmpty, Length } from 'class-validator';
 
 @Entity()
 export class User extends BasicEntity {
