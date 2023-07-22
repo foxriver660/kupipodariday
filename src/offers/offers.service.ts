@@ -5,6 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UserProfileResponseDto } from 'src/users/dto/response-dto/user-profile.dto';
 import { WishesService } from 'src/wishes/wishes.service';
 import { DataSource, Repository } from 'typeorm';
 import { CreateOfferDto } from './dto/create-offer.dto';
@@ -19,7 +20,7 @@ export class OffersService {
     private readonly dataSource: DataSource,
   ) {}
 
-  async create(user, createOfferDto: CreateOfferDto) {
+  async create(user: UserProfileResponseDto, createOfferDto: CreateOfferDto) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();

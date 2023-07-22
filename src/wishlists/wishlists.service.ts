@@ -5,6 +5,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ValidationUserDto } from 'src/auth/dto/validation-user.dto';
+import { UserPublicProfileResponseDto } from 'src/users/dto/response-dto/user-public-profile.dto';
 import { WishesService } from 'src/wishes/wishes.service';
 import { Repository } from 'typeorm';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
@@ -19,7 +21,10 @@ export class WishlistsService {
     private wishesService: WishesService,
   ) {}
 
-  async create(owner, createWishlistDto: CreateWishlistDto) {
+  async create(
+    owner: UserPublicProfileResponseDto,
+    createWishlistDto: CreateWishlistDto,
+  ) {
     try {
       const wishes = createWishlistDto.itemsId
         ? await this.wishesService.findWishesByIds(createWishlistDto.itemsId)
@@ -81,7 +86,7 @@ export class WishlistsService {
     }
   }
 
-  async remove(user, id: number) {
+  async remove(user: ValidationUserDto, id: number) {
     try {
       const removedWishList = await this.findById(id);
       if (removedWishList) {

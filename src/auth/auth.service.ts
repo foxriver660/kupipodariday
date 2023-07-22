@@ -12,6 +12,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { SignupResponseDto } from './dto/response-dto/signup-response.dto';
 import { SigninUserDto } from './dto/signin-user.dto';
 import { JwtService } from '@nestjs/jwt';
+import { UserPublicProfileResponseDto } from 'src/users/dto/response-dto/user-public-profile.dto';
 @Injectable()
 export class AuthService {
   constructor(
@@ -37,7 +38,7 @@ export class AuthService {
       }
     }
   }
-  async login(user: { username: string; id: string }) {
+  async login(user: UserPublicProfileResponseDto) {
     const payload = {
       username: user.username.split(' ').join(' '),
       sub: user.id,

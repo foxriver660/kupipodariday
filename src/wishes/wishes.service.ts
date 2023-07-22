@@ -5,6 +5,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ValidationUserDto } from 'src/auth/dto/validation-user.dto';
+import { UserPublicProfileResponseDto } from 'src/users/dto/response-dto/user-public-profile.dto';
 import { DataSource, In, Repository } from 'typeorm';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateRaiseWishDto } from './dto/update-raise-wish-copy.dto';
@@ -19,8 +21,10 @@ export class WishesService {
     private readonly dataSource: DataSource,
   ) {}
 
-  async create(owner, createWishDto: CreateWishDto) {
-    console.log(owner);
+  async create(
+    owner: UserPublicProfileResponseDto,
+    createWishDto: CreateWishDto,
+  ) {
     try {
       const savedWish = await this.wishRepository.save({
         owner,
@@ -31,7 +35,7 @@ export class WishesService {
       throw new InternalServerErrorException(error.message);
     }
   }
-  async createCopy(owner, id: number) {
+  async createCopy(owner: UserPublicProfileResponseDto, id: number) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -75,7 +79,7 @@ export class WishesService {
     }
   }
 
-  async findPopularWishes(sortOrder: 'ASC' | 'DESC'): Promise<Wish[]> {
+  async findPopularWishes(sortOrder: 'ASC' | 'DESC') {
     try {
       const order = { copied: sortOrder };
       const wishes = await this.wishRepository.find({ order });
@@ -125,7 +129,7 @@ export class WishesService {
     }
   }
 
-  async remove(user, id: number) {
+  async remove(user: ValidationUserDto, id: number) {
     try {
       const deletedWish = await this.findById(id);
       if (deletedWish) {

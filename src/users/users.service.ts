@@ -35,7 +35,7 @@ export class UsersService {
       throw new InternalServerErrorException(error.message);
     }
   }
-  // TODO скорректировать
+
   async findByQuery(value: string) {
     try {
       const user = await this.usersRepository.findOne({
@@ -55,14 +55,14 @@ export class UsersService {
 
   async update(id: number, updateUserDto: UpdateUserDto) {
     try {
-      if (updateUserDto.password) {
-        const genUser =
-          await this.authService.generateUserWithHashPass<UpdateUserDto>(
+      const genUpdate = updateUserDto.password
+        ? await this.authService.generateUserWithHashPass<UpdateUserDto>(
             updateUserDto,
-          );
-        await this.usersRepository.update(id, genUser);
-      } else {
-        await this.usersRepository.update(id, updateUserDto);
+          )
+        : updateUserDto;
+      const updateResult = await this.usersRepository.update(id, genUpdate);
+      if (updateResult.affected === 0) {
+        throw new InternalServerErrorException('Failed to update the wish');
       }
     } catch (error) {
       throw new InternalServerErrorException(error.message);
@@ -71,14 +71,14 @@ export class UsersService {
 
   async findUserWishes(username: string) {
     try {
-      const userWishes = await this.usersRepository.findOne({
-        where: { username: username },
+      const { wishes } = await this.usersRepository.findOne({
+        where: { username },
         relations: ['wishes'],
       });
-      if (!userWishes) {
+      if (!wishes) {
         throw new NotFoundException('User not found');
       }
-      return userWishes.wishes;
+      return wishes;
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
