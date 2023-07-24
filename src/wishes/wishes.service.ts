@@ -81,10 +81,14 @@ export class WishesService {
     }
   }
 
-  async findWishesBy(key: 'copied' | 'createdAt', sortOrder: 'ASC' | 'DESC') {
+  async findWishesBy(
+    key: 'copied' | 'createdAt',
+    sortOrder: 'ASC' | 'DESC',
+    quantity: number,
+  ) {
     try {
       const order = { [key]: sortOrder };
-      const wishes = await this.wishRepository.find({ order });
+      const wishes = await this.wishRepository.find({ order, take: quantity });
       return wishes;
     } catch (error) {
       this.errorsService.handleError(error);

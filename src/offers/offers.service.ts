@@ -30,17 +30,15 @@ export class OffersService {
       const wish = await this.wishesService.findById(createOfferDto.itemId, [
         'owner',
       ]);
-      if (!wish) {
-        throw new NotFoundException('Requested wish was not found');
-      }
       if (user.id === wish.owner.id) {
         throw new BadRequestException('You cant spend money on your wishes');
       }
-      if (wish.raised + createOfferDto.amount > wish.price) {
+      const totalRaised = wish.raised + createOfferDto.amount;
+      if (totalRaised > wish.price) {
         throw new BadRequestException('Donate is too big, reduce the amount');
       }
       await this.wishesService.update(wish.id, {
-        raised: createOfferDto.amount,
+        raised: totalRaised,
       });
       const savedOffer = await this.offerRepository.save({
         user,

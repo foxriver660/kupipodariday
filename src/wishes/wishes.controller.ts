@@ -38,19 +38,16 @@ export class WishesController {
     return this.wishesService.createCopy(user, +id);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get('last')
   findLast() {
-    return this.wishesService.findWishesBy('createdAt', 'DESC');
+    return this.wishesService.findWishesBy('createdAt', 'DESC', 3);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get('top')
   findTop() {
-    return this.wishesService.findWishesBy('copied', 'ASC');
+    return this.wishesService.findWishesBy('copied', 'ASC', 5);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get(':id')
   findById(@Param('id') id: string) {
     return this.wishesService.findById(+id);

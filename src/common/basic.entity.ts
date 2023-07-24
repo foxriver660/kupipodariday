@@ -1,4 +1,4 @@
-import { IsDate, IsInt, IsNumber } from 'class-validator';
+import { IsInt } from 'class-validator';
 import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
