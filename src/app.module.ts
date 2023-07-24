@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
@@ -10,8 +10,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ErrorsService } from './errors/errors.service';
 import { ErrorsModule } from './errors/errors.module';
-import { getPostgreSqlConfig } from './config/postgresql.comfig';
+import { getPostgreSqlConfig } from './config/postgresql.config';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { RequestLoggerMiddleware } from './common/request-logger.middleware';
 
 @Module({
   imports: [
@@ -36,4 +37,8 @@ import { ThrottlerModule } from '@nestjs/throttler';
   controllers: [AppController],
   providers: [AppService, ErrorsService],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(RequestLoggerMiddleware).forRoutes('*');
+  }
+}
