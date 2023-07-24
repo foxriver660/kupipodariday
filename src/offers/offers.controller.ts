@@ -12,7 +12,9 @@ import { OffersService } from './offers.service';
 import { CreateOfferDto } from './dto/create-offer.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { OwnerInterceptor } from 'src/common/owner.interceptor';
+import { ThrottlerGuard } from '@nestjs/throttler';
 
+@UseGuards(ThrottlerGuard)
 @Controller('offers')
 @UseGuards(JwtAuthGuard)
 export class OffersController {

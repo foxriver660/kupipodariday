@@ -8,28 +8,23 @@ import { OffersModule } from './offers/offers.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './users/entities/user.entity';
-import { Wishlist } from './wishlists/entities/wishlist.entity';
-import { Wish } from './wishes/entities/wish.entity';
-import { Offer } from './offers/entities/offer.entity';
 import { ErrorsService } from './errors/errors.service';
 import { ErrorsModule } from './errors/errors.module';
+import { getPostgreSqlConfig } from './config/postgresql.comfig';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'student',
-      password: 'student',
-      database: 'nest_project',
-      schema: 'nest_project',
-      entities: [User, Wish, Offer, Wishlist],
-      synchronize: true,
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: getPostgreSqlConfig,
     }),
     ConfigModule.forRoot({
       isGlobal: true,
+    }),
+    ThrottlerModule.forRootAsync({
+      useFactory: async () => ({ ttl: 80, limit: 10 }),
     }),
     UsersModule,
     WishesModule,

@@ -1,12 +1,11 @@
 import {
   ForbiddenException,
-  HttpException,
-  HttpStatus,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+
 import { ValidationUserDto } from 'src/auth/dto/validation-user.dto';
 import { ErrorsService } from 'src/errors/errors.service';
 import { UserPublicProfileResponseDto } from 'src/users/dto/response-dto/user-public-profile.dto';

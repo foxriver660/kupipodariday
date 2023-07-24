@@ -17,7 +17,9 @@ import { CreateWishlistDto } from './dto/create-wishlist.dto';
 import { UpdateWishlistDto } from './dto/update-wishlist.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { OwnerInterceptor } from 'src/common/owner.interceptor';
+import { ThrottlerGuard } from '@nestjs/throttler';
 
+@UseGuards(ThrottlerGuard)
 @Controller('wishlistlists')
 @UseGuards(JwtAuthGuard)
 export class WishlistsController {

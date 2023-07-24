@@ -16,7 +16,9 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { User } from './entities/user.entity';
 import { FindUsersDto } from './dto/find-users.dto';
+import { ThrottlerGuard } from '@nestjs/throttler';
 
+@UseGuards(ThrottlerGuard)
 @Controller('users')
 @UseGuards(JwtAuthGuard)
 export class UsersController {

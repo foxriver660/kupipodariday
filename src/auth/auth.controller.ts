@@ -9,10 +9,12 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
+import { ThrottlerGuard } from '@nestjs/throttler';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 
+@UseGuards(ThrottlerGuard)
 @Controller()
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
