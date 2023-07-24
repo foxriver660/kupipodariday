@@ -3,7 +3,6 @@ import { NestFactory } from '@nestjs/core';
 import helmet from 'helmet';
 import { WinstonModule } from 'nest-winston';
 import { AppModule } from './app.module';
-import 'winston-daily-rotate-file';
 import { loggerConfig } from './config/logger.config';
 
 async function bootstrap() {
