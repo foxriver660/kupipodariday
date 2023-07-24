@@ -21,11 +21,10 @@ import { FindUsersDto } from './dto/find-users.dto';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  // TODO доделать
   @UseGuards(JwtAuthGuard)
   @Post('find')
   create(@Body() { query }: FindUsersDto) {
-    return this.usersService.findByQuery(query);
+    return this.usersService.findMany(query);
   }
 
   @UseGuards(JwtAuthGuard)

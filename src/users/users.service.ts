@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthService } from 'src/auth/auth.service';
+import { ErrorsService } from 'src/errors/errors.service';
 import { Repository } from 'typeorm';
 import { UserProfileResponseDto } from './dto/response-dto/user-profile.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -16,6 +17,7 @@ export class UsersService {
     @InjectRepository(User)
     private usersRepository: Repository<User>,
     private authService: AuthService,
+    private readonly errorsService: ErrorsService,
   ) {}
 
   async findByIdOrName(
@@ -32,11 +34,11 @@ export class UsersService {
       }
       return user;
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      this.errorsService.handleError(error);
     }
   }
 
-  async findByQuery(value: string) {
+  async findMany(value: string) {
     try {
       const user = await this.usersRepository.findOne({
         where: {
@@ -49,7 +51,7 @@ export class UsersService {
       const { password, ...result } = user;
       return [result];
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      this.errorsService.handleError(error);
     }
   }
 
@@ -65,7 +67,7 @@ export class UsersService {
         throw new InternalServerErrorException('Failed to update the wish');
       }
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      this.errorsService.handleError(error);
     }
   }
 
@@ -80,7 +82,7 @@ export class UsersService {
       }
       return wishes;
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      this.errorsService.handleError(error);
     }
   }
 }

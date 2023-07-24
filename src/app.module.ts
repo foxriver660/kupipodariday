@@ -12,6 +12,8 @@ import { User } from './users/entities/user.entity';
 import { Wishlist } from './wishlists/entities/wishlist.entity';
 import { Wish } from './wishes/entities/wish.entity';
 import { Offer } from './offers/entities/offer.entity';
+import { ErrorsService } from './errors/errors.service';
+import { ErrorsModule } from './errors/errors.module';
 
 @Module({
   imports: [
@@ -34,8 +36,9 @@ import { Offer } from './offers/entities/offer.entity';
     WishlistsModule,
     OffersModule,
     AuthModule,
+    ErrorsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ErrorsService],
 })
 export class AppModule {}

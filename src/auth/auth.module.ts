@@ -9,6 +9,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { getJWTConfig } from 'src/config/jwt.config';
+import { ErrorsModule } from 'src/errors/errors.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { getJWTConfig } from 'src/config/jwt.config';
       inject: [ConfigService],
       useFactory: getJWTConfig,
     }),
+    ErrorsModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, LocalStrategy, JwtStrategy],

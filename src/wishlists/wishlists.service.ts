@@ -1,11 +1,14 @@
 import {
   ForbiddenException,
+  HttpException,
+  HttpStatus,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ValidationUserDto } from 'src/auth/dto/validation-user.dto';
+import { ErrorsService } from 'src/errors/errors.service';
 import { UserPublicProfileResponseDto } from 'src/users/dto/response-dto/user-public-profile.dto';
 import { WishesService } from 'src/wishes/wishes.service';
 import { Repository } from 'typeorm';
@@ -19,6 +22,7 @@ export class WishlistsService {
     @InjectRepository(Wishlist)
     private wishlistRepository: Repository<Wishlist>,
     private wishesService: WishesService,
+    private readonly errorsService: ErrorsService,
   ) {}
 
   async create(
@@ -36,7 +40,7 @@ export class WishlistsService {
       });
       return savedWishlist;
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      this.errorsService.handleError(error);
     }
   }
 
@@ -50,22 +54,26 @@ export class WishlistsService {
       }
       return allWishlists;
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      this.errorsService.handleError(error);
     }
   }
 
   async findById(id: number, relations?) {
     try {
+      const queryOptions = {};
+      if (relations) {
+        queryOptions['relations'] = relations;
+      }
       const wishlist = await this.wishlistRepository.findOne({
         where: { id },
-        relations: relations,
+        ...queryOptions,
       });
       if (!wishlist) {
         throw new NotFoundException('Requested wishlist was not found');
       }
       return wishlist;
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      this.errorsService.handleError(error);
     }
   }
 
@@ -82,22 +90,20 @@ export class WishlistsService {
         throw new InternalServerErrorException('Failed to update the wishlist');
       }
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      this.errorsService.handleError(error);
     }
   }
 
   async remove(user: ValidationUserDto, id: number) {
     try {
-      const removedWishList = await this.findById(id);
-      if (removedWishList) {
-        throw new NotFoundException('Requested wishlist was not found');
-      }
+      const removedWishList = await this.findById(id, ['owner']);
+
       if (user.id !== removedWishList.owner.id) {
         throw new ForbiddenException('You cant remove not your wishlist');
       }
       await this.wishlistRepository.delete(id);
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      this.errorsService.handleError(error);
     }
   }
 }

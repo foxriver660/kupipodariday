@@ -1,4 +1,11 @@
-import { Entity, Column, OneToMany, BeforeInsert, SaveOptions } from 'typeorm';
+import {
+  Entity,
+  Column,
+  OneToMany,
+  BeforeInsert,
+  SaveOptions,
+  BeforeUpdate,
+} from 'typeorm';
 import { BasicEntity } from 'src/entity/base.entity';
 import { Offer } from 'src/offers/entities/offer.entity';
 import { Wish } from 'src/wishes/entities/wish.entity';

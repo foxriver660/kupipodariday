@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ValidationUserDto } from 'src/auth/dto/validation-user.dto';
+import { ErrorsService } from 'src/errors/errors.service';
 import { UserPublicProfileResponseDto } from 'src/users/dto/response-dto/user-public-profile.dto';
 import { DataSource, In, Repository } from 'typeorm';
 import { CreateWishDto } from './dto/create-wish.dto';
@@ -19,6 +20,7 @@ export class WishesService {
     @InjectRepository(Wish)
     private wishRepository: Repository<Wish>,
     private readonly dataSource: DataSource,
+    private readonly errorsService: ErrorsService,
   ) {}
 
   async create(
@@ -32,7 +34,7 @@ export class WishesService {
       });
       return savedWish;
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      this.errorsService.handleError(error);
     }
   }
   async createCopy(owner: UserPublicProfileResponseDto, id: number) {
@@ -73,33 +75,38 @@ export class WishesService {
       await queryRunner.commitTransaction();
     } catch (error) {
       await queryRunner.rollbackTransaction();
-      throw new InternalServerErrorException(error.message);
+      this.errorsService.handleError(error);
     } finally {
       await queryRunner.release();
     }
   }
 
-  async findPopularWishes(sortOrder: 'ASC' | 'DESC') {
+  async findWishesBy(key: 'copied' | 'createdAt', sortOrder: 'ASC' | 'DESC') {
     try {
-      const order = { copied: sortOrder };
+      const order = { [key]: sortOrder };
       const wishes = await this.wishRepository.find({ order });
       return wishes;
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      this.errorsService.handleError(error);
     }
   }
+
   async findById(id: number, relations?) {
     try {
+      const queryOptions = {};
+      if (relations) {
+        queryOptions['relations'] = relations;
+      }
       const wish = await this.wishRepository.findOne({
         where: { id },
-        relations: [relations],
+        ...queryOptions,
       });
       if (!wish) {
         throw new NotFoundException('Requested wish was not found');
       }
       return wish;
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      this.errorsService.handleError(error);
     }
   }
   async findWishesByIds(ids: number[]) {
@@ -115,7 +122,7 @@ export class WishesService {
       }
       return wishes;
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      this.errorsService.handleError(error);
     }
   }
   async update(id: number, updateWishDto: UpdateWishDto | UpdateRaiseWishDto) {
@@ -125,22 +132,19 @@ export class WishesService {
         throw new InternalServerErrorException('Failed to update the wish');
       }
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      this.errorsService.handleError(error);
     }
   }
 
   async remove(user: ValidationUserDto, id: number) {
     try {
-      const deletedWish = await this.findById(id);
-      if (deletedWish) {
-        throw new NotFoundException('Requested wish was not found');
-      }
+      const deletedWish = await this.findById(id, ['owner']);
       if (user.id !== deletedWish.owner.id) {
         throw new ForbiddenException('You cant remove not your wish');
       }
       await this.wishRepository.delete(id);
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      this.errorsService.handleError(error);
     }
   }
 }

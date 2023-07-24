@@ -18,6 +18,7 @@ import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { OwnerInterceptor } from 'src/interceptor/owner.interceptor';
+import { UserPublicProfileResponseDto } from 'src/users/dto/response-dto/user-public-profile.dto';
 
 @Controller('wishes')
 export class WishesController {
@@ -40,13 +41,13 @@ export class WishesController {
   @UseGuards(JwtAuthGuard)
   @Get('last')
   findLast() {
-    return this.wishesService.findPopularWishes('DESC');
+    return this.wishesService.findWishesBy('createdAt', 'DESC');
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('top')
   findTop() {
-    return this.wishesService.findPopularWishes('ASC');
+    return this.wishesService.findWishesBy('copied', 'ASC');
   }
 
   @UseGuards(JwtAuthGuard)
@@ -58,14 +59,13 @@ export class WishesController {
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateWishDto: UpdateWishDto) {
-    console.log('patch wishes/:id', updateWishDto, `id: ${id}`);
     return this.wishesService.update(+id, updateWishDto);
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   remove(@Req() { user }, @Param('id') id: string) {
-    console.log('delete wishes/:id', `id: ${id}`);
+    console.log(id);
     return this.wishesService.remove(user, +id);
   }
 }

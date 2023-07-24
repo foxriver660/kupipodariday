@@ -13,12 +13,14 @@ import { SignupResponseDto } from './dto/response-dto/signup-response.dto';
 import { SigninUserDto } from './dto/signin-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { UserPublicProfileResponseDto } from 'src/users/dto/response-dto/user-public-profile.dto';
+import { ErrorsService } from 'src/errors/errors.service';
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
     private jwtService: JwtService,
+    private readonly errorsService: ErrorsService,
   ) {}
   async register(createUserDto: CreateUserDto) {
     try {
@@ -34,7 +36,7 @@ export class AuthService {
           `User with same username or email already exists`,
         );
       } else {
-        throw new InternalServerErrorException(error.message);
+        this.errorsService.handleError(error);
       }
     }
   }

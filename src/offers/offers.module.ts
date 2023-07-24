@@ -7,12 +7,14 @@ import { Wish } from 'src/wishes/entities/wish.entity';
 import { User } from 'src/users/entities/user.entity';
 import { WishesModule } from 'src/wishes/wishes.module';
 import { UsersModule } from 'src/users/users.module';
+import { ErrorsModule } from 'src/errors/errors.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Offer, Wish, User]),
     WishesModule,
     UsersModule,
+    ErrorsModule,
   ],
   controllers: [OffersController],
   providers: [OffersService],

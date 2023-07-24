@@ -5,6 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ErrorsService } from 'src/errors/errors.service';
 import { UserProfileResponseDto } from 'src/users/dto/response-dto/user-profile.dto';
 import { WishesService } from 'src/wishes/wishes.service';
 import { DataSource, Repository } from 'typeorm';
@@ -18,6 +19,7 @@ export class OffersService {
     private offerRepository: Repository<Offer>,
     private wishesService: WishesService,
     private readonly dataSource: DataSource,
+    private readonly errorsService: ErrorsService,
   ) {}
 
   async create(user: UserProfileResponseDto, createOfferDto: CreateOfferDto) {
@@ -25,10 +27,9 @@ export class OffersService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const wish = await this.wishesService.findById(
-        createOfferDto.itemId,
+      const wish = await this.wishesService.findById(createOfferDto.itemId, [
         'owner',
-      );
+      ]);
       if (!wish) {
         throw new NotFoundException('Requested wish was not found');
       }
@@ -50,7 +51,7 @@ export class OffersService {
       return savedOffer;
     } catch (error) {
       await queryRunner.rollbackTransaction();
-      throw new InternalServerErrorException(error.message);
+      this.errorsService.handleError(error);
     } finally {
       await queryRunner.release();
     }
@@ -66,7 +67,7 @@ export class OffersService {
       }
       return allOffers;
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      this.errorsService.handleError(error);
     }
   }
 
@@ -81,7 +82,7 @@ export class OffersService {
       }
       return findOffer;
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      this.errorsService.handleError(error);
     }
   }
 }
