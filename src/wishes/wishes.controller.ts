@@ -17,7 +17,7 @@ import { WishesService } from './wishes.service';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { OwnerInterceptor } from 'src/interceptor/owner.interceptor';
+import { OwnerInterceptor } from 'src/common/owner.interceptor';
 import { UserPublicProfileResponseDto } from 'src/users/dto/response-dto/user-public-profile.dto';
 
 @Controller('wishes')

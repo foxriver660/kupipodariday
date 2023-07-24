@@ -16,7 +16,7 @@ import { WishlistsService } from './wishlists.service';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
 import { UpdateWishlistDto } from './dto/update-wishlist.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { OwnerInterceptor } from 'src/interceptor/owner.interceptor';
+import { OwnerInterceptor } from 'src/common/owner.interceptor';
 
 @Controller('wishlistlists')
 export class WishlistsController {

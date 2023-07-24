@@ -6,7 +6,7 @@ import {
   SaveOptions,
   BeforeUpdate,
 } from 'typeorm';
-import { BasicEntity } from 'src/entity/base.entity';
+import { BasicEntity } from 'src/common/basic.entity';
 import { Offer } from 'src/offers/entities/offer.entity';
 import { Wish } from 'src/wishes/entities/wish.entity';
 import { Wishlist } from 'src/wishlists/entities/wishlist.entity';
