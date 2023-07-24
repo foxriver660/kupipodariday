@@ -7,12 +7,11 @@ export class RequestLoggerMiddleware implements NestMiddleware {
 
   use(req: Request, res: Response, next: NextFunction) {
     res.on('finish', () => {
-      console.log(res);
       const statusCode = res.statusCode;
-      const statusCMessage = res.statusMessage;
+      const statusMessage = res.statusMessage;
       if (statusCode >= 400) {
         this.logger.error(
-          `${statusCode} - ${statusCMessage} // [${req.method}] ${req.url} `,
+          `${statusCode} - ${statusMessage} // [${req.method}] ${req.url} `,
         );
       }
     });

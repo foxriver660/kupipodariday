@@ -7,9 +7,6 @@ import {
   Param,
   Delete,
   UseGuards,
-  UsePipes,
-  ValidationPipe,
-  Res,
   Req,
   UseInterceptors,
 } from '@nestjs/common';
@@ -18,7 +15,6 @@ import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { OwnerInterceptor } from 'src/common/owner.interceptor';
-import { UserPublicProfileResponseDto } from 'src/users/dto/response-dto/user-public-profile.dto';
 import { ThrottlerGuard } from '@nestjs/throttler';
 
 @UseGuards(ThrottlerGuard)
@@ -42,12 +38,12 @@ export class WishesController {
 
   @Get('last')
   findLast() {
-    return this.wishesService.findWishesBy('createdAt', 'DESC', 3);
+    return this.wishesService.findWishesBy('createdAt', 'DESC', 40);
   }
 
   @Get('top')
   findTop() {
-    return this.wishesService.findWishesBy('copied', 'ASC', 5);
+    return this.wishesService.findWishesBy('copied', 'ASC', 20);
   }
 
   @Get(':id')
