@@ -26,7 +26,7 @@ export class WishesService {
   async create(
     owner: UserPublicProfileResponseDto,
     createWishDto: CreateWishDto,
-  ) {
+  ): Promise<Wish> {
     try {
       const savedWish = await this.wishRepository.save({
         owner,
@@ -37,7 +37,10 @@ export class WishesService {
       this.errorsService.handleError(error);
     }
   }
-  async createCopy(owner: UserPublicProfileResponseDto, id: number) {
+  async createCopy(
+    owner: UserPublicProfileResponseDto,
+    id: number,
+  ): Promise<Wish> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -73,6 +76,7 @@ export class WishesService {
         );
       }
       await queryRunner.commitTransaction();
+      return savedWish;
     } catch (error) {
       await queryRunner.rollbackTransaction();
       this.errorsService.handleError(error);
@@ -85,7 +89,7 @@ export class WishesService {
     key: 'copied' | 'createdAt',
     sortOrder: 'ASC' | 'DESC',
     quantity: number,
-  ) {
+  ): Promise<Wish[]> {
     try {
       const order = { [key]: sortOrder };
       const wishes = await this.wishRepository.find({ order, take: quantity });
@@ -95,7 +99,7 @@ export class WishesService {
     }
   }
 
-  async findById(id: number, relations?) {
+  async findById(id: number, relations?): Promise<Wish> {
     try {
       const queryOptions = {};
       if (relations) {
@@ -113,7 +117,7 @@ export class WishesService {
       this.errorsService.handleError(error);
     }
   }
-  async findWishesByIds(ids: number[]) {
+  async findWishesByIds(ids: number[]): Promise<Wish[]> {
     try {
       const wishes = await this.wishRepository.find({
         where: { id: In(ids) },
@@ -129,7 +133,10 @@ export class WishesService {
       this.errorsService.handleError(error);
     }
   }
-  async update(id: number, updateWishDto: UpdateWishDto | UpdateRaiseWishDto) {
+  async update(
+    id: number,
+    updateWishDto: UpdateWishDto | UpdateRaiseWishDto,
+  ): Promise<void> {
     try {
       const updateResult = await this.wishRepository.update(id, updateWishDto);
       if (updateResult.affected === 0) {
@@ -140,7 +147,7 @@ export class WishesService {
     }
   }
 
-  async remove(user: ValidationUserDto, id: number) {
+  async remove(user: ValidationUserDto, id: number): Promise<void> {
     try {
       const deletedWish = await this.findById(id, ['owner']);
       if (user.id !== deletedWish.owner.id) {

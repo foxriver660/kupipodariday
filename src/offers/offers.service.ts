@@ -22,7 +22,10 @@ export class OffersService {
     private readonly errorsService: ErrorsService,
   ) {}
 
-  async create(user: UserProfileResponseDto, createOfferDto: CreateOfferDto) {
+  async create(
+    user: UserProfileResponseDto,
+    createOfferDto: CreateOfferDto,
+  ): Promise<Offer> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -55,7 +58,7 @@ export class OffersService {
     }
   }
 
-  async findAll() {
+  async findAll(): Promise<Offer[]> {
     try {
       const allOffers = await this.offerRepository.find({
         relations: ['item', 'user'],
@@ -69,7 +72,7 @@ export class OffersService {
     }
   }
 
-  async findById(id: number) {
+  async findById(id: number): Promise<Offer> {
     try {
       const findOffer = await this.offerRepository.findOne({
         where: { id },

@@ -43,7 +43,7 @@ export class WishlistsService {
     }
   }
 
-  async findAll() {
+  async findAll(): Promise<Wishlist[]> {
     try {
       const allWishlists = await this.wishlistRepository.find({
         relations: ['owner', 'items'],
@@ -57,7 +57,7 @@ export class WishlistsService {
     }
   }
 
-  async findById(id: number, relations?) {
+  async findById(id: number, relations?): Promise<Wishlist> {
     try {
       const queryOptions = {};
       if (relations) {
@@ -76,7 +76,10 @@ export class WishlistsService {
     }
   }
 
-  async update(id: number, updateWishlistDto: UpdateWishlistDto) {
+  async update(
+    id: number,
+    updateWishlistDto: UpdateWishlistDto,
+  ): Promise<void> {
     try {
       const wishes = updateWishlistDto.itemsId
         ? await this.wishesService.findWishesByIds(updateWishlistDto.itemsId)
@@ -93,7 +96,7 @@ export class WishlistsService {
     }
   }
 
-  async remove(user: ValidationUserDto, id: number) {
+  async remove(user: ValidationUserDto, id: number): Promise<void> {
     try {
       const removedWishList = await this.findById(id, ['owner']);
 

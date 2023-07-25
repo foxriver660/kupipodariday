@@ -6,6 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { BcryptService } from 'src/bcrypt/bcrypt.service';
 import { ErrorsService } from 'src/errors/errors.service';
+import { Wish } from 'src/wishes/entities/wish.entity';
 import { Repository } from 'typeorm';
 import { UserProfileResponseDto } from './dto/response-dto/user-profile.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -38,7 +39,7 @@ export class UsersService {
     }
   }
 
-  async findMany(value: string) {
+  async findMany(value: string): Promise<UserProfileResponseDto[]> {
     try {
       const user = await this.usersRepository.findOne({
         where: {
@@ -55,7 +56,7 @@ export class UsersService {
     }
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
+  async update(id: number, updateUserDto: UpdateUserDto): Promise<void> {
     try {
       const genUpdate = updateUserDto.password
         ? await this.bcryptService.generateUserWithHashPass<UpdateUserDto>(
@@ -71,7 +72,7 @@ export class UsersService {
     }
   }
 
-  async findUserWishes(username: string) {
+  async findUserWishes(username: string): Promise<Wish[]> {
     try {
       const { wishes } = await this.usersRepository.findOne({
         where: { username },

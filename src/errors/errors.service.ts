@@ -4,7 +4,7 @@ import { Logger } from 'winston';
 
 @Injectable()
 export class ErrorsService {
-  handleError(error: Error) {
+  handleError(error: Error): void {
     if (error instanceof HttpException) {
       throw error;
     } else {

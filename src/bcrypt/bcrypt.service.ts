@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { genSalt, hash } from 'bcrypt';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class BcryptService {

@@ -15,6 +15,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UserPublicProfileResponseDto } from 'src/users/dto/response-dto/user-public-profile.dto';
 import { ErrorsService } from 'src/errors/errors.service';
 import { BcryptService } from 'src/bcrypt/bcrypt.service';
+import { SigninResponseDto } from './dto/response-dto/signin-response.dto';
 @Injectable()
 export class AuthService {
   constructor(
@@ -24,7 +25,7 @@ export class AuthService {
     private bcryptService: BcryptService,
     private readonly errorsService: ErrorsService,
   ) {}
-  async register(createUserDto: CreateUserDto) {
+  async register(createUserDto: CreateUserDto): Promise<SignupResponseDto> {
     try {
       const genUser =
         await this.bcryptService.generateUserWithHashPass<CreateUserDto>(
@@ -43,7 +44,7 @@ export class AuthService {
       }
     }
   }
-  async login(user: UserPublicProfileResponseDto) {
+  async login(user: UserPublicProfileResponseDto): Promise<SigninResponseDto> {
     const payload = {
       username: user.username.split(' ').join(' '),
       sub: user.id,
