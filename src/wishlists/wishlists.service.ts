@@ -27,7 +27,7 @@ export class WishlistsService {
   async create(
     owner: UserPublicProfileResponseDto,
     createWishlistDto: CreateWishlistDto,
-  ) {
+  ): Promise<Wishlist> {
     try {
       const wishes = createWishlistDto.itemsId
         ? await this.wishesService.findWishesByIds(createWishlistDto.itemsId)

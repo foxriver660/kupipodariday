@@ -3,7 +3,8 @@ import { BasicEntity } from 'src/common/basic.entity';
 import { Offer } from 'src/offers/entities/offer.entity';
 import { Wish } from 'src/wishes/entities/wish.entity';
 import { Wishlist } from 'src/wishlists/entities/wishlist.entity';
-import { IsEmail, IsString, IsUrl } from 'class-validator';
+import { IsEmail, IsString, IsUrl, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
 
 @Entity()
 export class User extends BasicEntity {
@@ -28,11 +29,17 @@ export class User extends BasicEntity {
   avatar: string;
 
   @OneToMany(() => Wish, (wish) => wish.owner)
+  @ValidateNested({ each: true })
+  @Type(() => Wish)
   wishes: Wish[];
 
   @OneToMany(() => Offer, (offer) => offer.user)
+  @ValidateNested({ each: true })
+  @Type(() => Offer)
   offers: Offer[];
 
   @OneToMany(() => Wishlist, (wishlist) => wishlist.owner)
+  @ValidateNested({ each: true })
+  @Type(() => Wishlist)
   wishlists: Wishlist[];
 }

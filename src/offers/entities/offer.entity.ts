@@ -1,4 +1,10 @@
-import { IsBoolean, IsNumber } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsBoolean,
+  IsDefined,
+  IsNumber,
+  ValidateNested,
+} from 'class-validator';
 import { BasicEntity } from 'src/common/basic.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Wish } from 'src/wishes/entities/wish.entity';
@@ -15,8 +21,14 @@ export class Offer extends BasicEntity {
   hidden: boolean;
 
   @ManyToOne(() => User, (user) => user.offers)
+  @ValidateNested()
+  @Type(() => User)
+  @IsDefined()
   user: User;
 
   @ManyToOne(() => Wish, (wish) => wish.offers)
+  @ValidateNested()
+  @Type(() => Wish)
+  @IsDefined()
   item: Wish;
 }
