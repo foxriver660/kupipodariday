@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { AuthService } from 'src/auth/auth.service';
+import { BcryptService } from 'src/bcrypt/bcrypt.service';
 import { ErrorsService } from 'src/errors/errors.service';
 import { Repository } from 'typeorm';
 import { UserProfileResponseDto } from './dto/response-dto/user-profile.dto';
@@ -16,7 +16,7 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
-    private authService: AuthService,
+    private bcryptService: BcryptService,
     private readonly errorsService: ErrorsService,
   ) {}
 
@@ -58,7 +58,7 @@ export class UsersService {
   async update(id: number, updateUserDto: UpdateUserDto) {
     try {
       const genUpdate = updateUserDto.password
-        ? await this.authService.generateUserWithHashPass<UpdateUserDto>(
+        ? await this.bcryptService.generateUserWithHashPass<UpdateUserDto>(
             updateUserDto,
           )
         : updateUserDto;

@@ -13,6 +13,8 @@ import { ErrorsModule } from './errors/errors.module';
 import { getPostgreSqlConfig } from './config/postgresql.config';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { RequestLoggerMiddleware } from './common/request-logger.middleware';
+import { BcryptService } from './bcrypt/bcrypt.service';
+import { BcryptModule } from './bcrypt/bcrypt.module';
 
 @Module({
   imports: [
@@ -33,9 +35,10 @@ import { RequestLoggerMiddleware } from './common/request-logger.middleware';
     OffersModule,
     AuthModule,
     ErrorsModule,
+    BcryptModule,
   ],
   controllers: [AppController],
-  providers: [AppService, ErrorsService],
+  providers: [AppService, ErrorsService, BcryptService],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {

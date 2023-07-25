@@ -10,6 +10,8 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { getJWTConfig } from 'src/config/jwt.config';
 import { ErrorsModule } from 'src/errors/errors.module';
+import { BcryptService } from 'src/bcrypt/bcrypt.service';
+import { BcryptModule } from 'src/bcrypt/bcrypt.module';
 
 @Module({
   imports: [
@@ -21,6 +23,7 @@ import { ErrorsModule } from 'src/errors/errors.module';
       useFactory: getJWTConfig,
     }),
     ErrorsModule,
+    BcryptModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, LocalStrategy, JwtStrategy],
